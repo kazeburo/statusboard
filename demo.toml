@@ -1,0 +1,13 @@
+title = "title"
+
+[[category]]
+name = "グローバル"
+comment = "グローバルサービス"
+
+[[category.service]]
+name = "だいじなサービス"
+command = ["sh", "-c", "echo stdout; echo 1>&2 stderr && exit 0"]
+
+[[category.service]]
+name = "いつものサービス"
+command = ["sh", "-c", "echo stdout; echo 1>&2 stderr && exit 3"]
