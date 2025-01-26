@@ -41,7 +41,7 @@ func (o *Opt) httpserver() error {
 
 	skipper := func(c echo.Context) bool {
 		switch c.Path() {
-		case "/", "/live":
+		case "/favicon.ico", "/live":
 			return true
 		default:
 			return false

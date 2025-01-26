@@ -18,6 +18,7 @@ func (o *Opt) execServiceCommand(ctx context.Context, service *Service) (int, st
 	output, err := exec.CommandContext(ctx, service.Command[0], args...).CombinedOutput()
 
 	if err != nil {
+		log.Printf("run command error. service: %v error: %v", service, err)
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			return exiterr.ExitCode(), string(output), nil
 		} else {
@@ -25,6 +26,20 @@ func (o *Opt) execServiceCommand(ctx context.Context, service *Service) (int, st
 		}
 	}
 	return 0, string(output), nil
+}
+
+func (o *Opt) execServiceCommandWithRetry(ctx context.Context, service *Service) (int, string, error) {
+	var status = 255
+	var output = ""
+	var err error
+	for retry := 0; retry < 3; retry++ {
+		status, output, err = o.execServiceCommand(ctx, service)
+		if status == 0 {
+			break
+		}
+		<-time.After(5 * time.Second)
+	}
+	return status, output, err
 }
 
 type resultMessage struct {
@@ -44,7 +59,7 @@ func (o *Opt) execWorker(ctx context.Context) error {
 				ch := make(chan resultMessage, 1)
 				go func() {
 					var e error
-					status, message, e := o.execServiceCommand(ctx, service)
+					status, message, e := o.execServiceCommandWithRetry(ctx, service)
 					ch <- resultMessage{
 						status:  status,
 						message: message,

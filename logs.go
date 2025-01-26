@@ -98,7 +98,7 @@ func (o *Opt) loadLog(_ context.Context, d time.Time) (time.Time, counter, count
 func (o *Opt) loadLogs(ctx context.Context) {
 	d := time.Now()
 	days := make([]string, 0, 10)
-	days = append(days, "current")
+	days = append(days, o.config.LatestTimeRange.ShortString())
 
 	// initilize
 	for _, categeory := range o.config.Categories {
