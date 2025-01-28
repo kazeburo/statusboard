@@ -10,6 +10,8 @@ import (
 	"github.com/gammazero/workerpool"
 )
 
+var ErrorStatusCode = 255
+
 func (o *Opt) execServiceCommand(ctx context.Context, service *Service) (int, string, error) {
 	args := []string{}
 	for i := 1; i < len(service.Command); i++ {
@@ -22,22 +24,22 @@ func (o *Opt) execServiceCommand(ctx context.Context, service *Service) (int, st
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			return exiterr.ExitCode(), string(output), nil
 		} else {
-			return 255, string(output), err
+			return ErrorStatusCode, string(output), err
 		}
 	}
 	return 0, string(output), nil
 }
 
 func (o *Opt) execServiceCommandWithRetry(ctx context.Context, service *Service) (int, string, error) {
-	var status = 255
+	var status = ErrorStatusCode
 	var output = ""
 	var err error
-	for retry := 0; retry < 3; retry++ {
+	for retry := 0; retry < o.config.MaxCheckAttempts; retry++ {
 		status, output, err = o.execServiceCommand(ctx, service)
 		if status == 0 {
 			break
 		}
-		<-time.After(5 * time.Second)
+		<-time.After(o.config.RetryInterval.Duration)
 	}
 	return status, output, err
 }
@@ -72,7 +74,7 @@ func (o *Opt) execWorker(ctx context.Context) error {
 					// nothing
 				case <-ctx.Done():
 					msg = resultMessage{
-						status:  255,
+						status:  ErrorStatusCode,
 						message: "",
 						error:   fmt.Errorf("command timeout"),
 					}

@@ -103,9 +103,9 @@ func (o *Opt) loadLogs(ctx context.Context) {
 	// initilize
 	for _, categeory := range o.config.Categories {
 		for _, service := range categeory.Services {
-			service.LatestStatus = "nodata"
+			service.LatestStatus = NoDATA
 			service.LatestStatusAt = time.Now()
-			statuses := []string{"nodata", "nodata", "nodata", "nodata", "nodata", "nodata", "nodata"}
+			statuses := []*statusText{NoDATA, NoDATA, NoDATA, NoDATA, NoDATA, NoDATA, NoDATA}
 			service.Statuses = statuses
 		}
 	}
@@ -126,11 +126,11 @@ func (o *Opt) loadLogs(ctx context.Context) {
 					ngCount := latestFailed[k]
 					service.LatestStatusAt = lastUpdated
 					if okCount == 0 && ngCount == 0 {
-						service.LatestStatus = "nodata"
+						service.LatestStatus = NoDATA
 					} else if ngCount > 0 {
-						service.LatestStatus = "warning"
+						service.LatestStatus = Warning
 					} else {
-						service.LatestStatus = "operational"
+						service.LatestStatus = Operational
 					}
 				}
 			}
@@ -142,11 +142,11 @@ func (o *Opt) loadLogs(ctx context.Context) {
 				okCount := ok[k]
 				ngCount := failed[k]
 				if okCount == 0 && ngCount == 0 {
-					service.Statuses[i] = "nodata"
+					service.Statuses[i] = NoDATA
 				} else if ngCount > 0 {
-					service.Statuses[i] = "warning"
+					service.Statuses[i] = Warning
 				} else {
-					service.Statuses[i] = "operational"
+					service.Statuses[i] = Operational
 				}
 			}
 		}

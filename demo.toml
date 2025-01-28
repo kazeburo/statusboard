@@ -1,4 +1,22 @@
-title = "title"
+title = "Status Page"
+nav_title = "Status Page / DEMO"
+nav_button_name = "HOME"
+nav_button_link = "/"
+
+header_message = ""
+
+footer_message = """
+ページ上のメッセージ
+- markdownが書けます
+- [GitHub](https://github.com/)
+"""
+
+num_of_worker = 4
+
+worker_interval = "1m"
+worker_timeoout = "30s"
+latest_time_range = "1h"
+
 
 [[category]]
 name = "グローバル"
@@ -10,4 +28,16 @@ command = ["sh", "-c", "echo stdout; echo 1>&2 stderr && exit 0"]
 
 [[category.service]]
 name = "いつものサービス"
+command = ["sh", "-c", "echo stdout; echo 1>&2 stderr && exit 3"]
+
+[[category]]
+name = "プライベート"
+comment = "プライベートサービス"
+
+[[category.service]]
+name = "DNSサービス"
+command = ["sh", "-c", "echo stdout; echo 1>&2 stderr && exit 0"]
+
+[[category.service]]
+name = "HTTPサービス"
 command = ["sh", "-c", "echo stdout; echo 1>&2 stderr && exit 3"]

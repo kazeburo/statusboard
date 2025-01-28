@@ -5,64 +5,133 @@
 <head>
     <meta charset="utf-8">
     <title>{{ .Title }}</title>
-
     <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <style>
+        .table th:first-child,
+        .table td:first-child {
+            width: 20% !important;
+            text-align: left;
+            border-right: solid 1px #ccc;
+        }
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous"></script>
-
+        .table th,
+        .table td {
+            width: 10%;
+            text-align: center !important;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-            <a href="/"
-                class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-                <span class="fs-4">{{ .Title }}</span>
-            </a>
+    <div class="container is-max-desktop">
+        <section class="hero">
+            <div class="hero-head">
+                <nav class="navbar">
+                    <div class="container">
+                        <div class="navbar-brand">
+                            <h1 class="navbar-item title is-2">{{ .NavTitle }}</h1>
+                        </div>
+                        <div class="navbar-menu">
+                            <div class="navbar-end">
+                                <span class="navbar-item">
+                                    <span class="button is-small"><a class="navbar-item" href="{{ .NavButtonLink }}">
+                                            {{ .NavButtonName }}
+                                        </a></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </section>
 
-            <ul class="nav nav-pills">
-                <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">Home</a></li>
-            </ul>
-        </header>
+        <div class="block" style="border-bottom: solid 1px #ccc;"></div>
 
-        <div class="">
-            {{ range .Categories }}
-            <h2>{{ .Name }}</h2>
-            <p>{{ .Comment }}</p>
-            <table style="width: 100%;">
-                <tr>
-                    <th
-                        style="width: 20%;padding: 5px;border-bottom: solid 1px #ccc;border-right: solid 1px #ccc;text-align: center;">
-                    </th>
-                    {{ range $.Days }}
-                    <th style=" width: 10%;padding: 5px;border-bottom: solid 1px #ccc;text-align: center;">
-                        {{ . }}</td>
-                        {{ end }}
-                </tr>
-                {{ range .Services }}
-                <tr>
-                    <th
-                        style="padding: 5px;border-bottom: solid 1px #ccc;border-right: solid 1px #ccc;text-align: center;">
-                        {{ .Name }}</th>
-                    <td title="{{ .LatestStatus }} {{ .LatestStatusAt }}"
-                        style="padding: 5px;border-bottom: solid 1px #ccc;text-align: center;">
-                        {{
-                        .LatestStatus }}</td>
-                    {{ range .Statuses }}
-                    <td style="padding: 5px;border-bottom: solid 1px #ccc;text-align: center;">
-                        {{ . }}
-                    </td>
-                    {{ end }}
-                </tr>
-                {{ end }}
-            </table>
-
-            {{ end }}
+        {{ if ne .HeaderMessage.Plain "" }}
+        <div class="block">
+            <div class="notification">
+                <div class="content">
+                    {{ .HeaderMessage.HTML }}
+                </div>
+            </div>
         </div>
+        {{ end }}
+
+        {{ range .Categories }}
+        <div class="block">
+            <section class=" section is-small" style="padding: 2rem 0.5rem 1rem;">
+                <h2 class="title is-4">{{ .Name }}</h2>
+                {{ if ne .Comment "" }}<p class="subtitle is-5">{{ .Comment }}</p>{{ end }}
+            </section>
+            <table class="table is-fullwidth is-hoverable">
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        {{ range $.Days }}
+                        <th>
+                            {{ . }}</td>
+                            {{ end }}
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>
+                        </th>
+                        {{ range $.Days }}
+                        <th>
+                            {{ . }}</td>
+                            {{ end }}
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {{ range .Services }}
+                    <tr>
+                        <th>
+                            {{ .Name }}</th>
+                        <td title="{{ .LatestStatus }} {{ .LatestStatusAt }}">
+                            <span
+                                class='is-large has-{{ if .LatestStatus.IsOperational }}text-success{{ else if .LatestStatus.IsWarning }}text-warning{{ else }}text-light{{ end }}'>
+                                {{ if .LatestStatus.IsOperational }}🟢{{ else if .LatestStatus.IsWarning }}⚠️{{
+                                else
+                                }}➖{{ end }}
+                            </span>
+                        </td>
+                        {{ range .Statuses }}
+                        <td>
+                            <span
+                                class='is-large has-{{ if .IsOperational }}text-success{{ else if .IsWarning }}text-warning{{ else }}text-light{{ end }}'>
+                                {{ if .IsOperational }}🟢{{ else if .IsWarning }}⚠️{{ else
+                                }}➖{{ end }}
+                            </span>
+                        </td>
+                        {{ end }}
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
+        {{ end }}
+
+        {{ if ne .FooterMessage.Plain "" }}
+        <div class="block" style="margin-top: 50px;">
+            <div class="notification">
+                <div class="content">
+                    {{ .FooterMessage.HTML }}
+                </div>
+            </div>
+        </div>
+        {{ end }}
+
+        <div class="block" style="border-bottom: solid 1px #ccc;"></div>
+
+        <footer class="footer is-small" style="padding: 1rem;">
+            <div class="content has-text-centered">
+                <p>
+                    Powered by statusboard.
+                </p>
+            </div>
+        </footer>
     </div>
 </body>
 

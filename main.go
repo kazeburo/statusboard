@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"html/template"
 	"os"
 	"runtime"
 	"strings"
@@ -11,6 +13,10 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/jessevdk/go-flags"
 	"github.com/pkg/errors"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 var version string
@@ -54,15 +60,77 @@ func (d *duration) ShortString() string {
 	return s
 }
 
+type markdown struct {
+	original string
+	html     string
+}
+
+func (m *markdown) UnmarshalText(source []byte) error {
+	md := goldmark.New(
+		goldmark.WithExtensions(extension.GFM),
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
+		goldmark.WithRendererOptions(
+			html.WithHardWraps(),
+			html.WithXHTML(),
+		),
+	)
+	var buf bytes.Buffer
+	if err := md.Convert(source, &buf); err != nil {
+		return err
+	}
+	m.html = buf.String()
+	m.original = string(source)
+	return nil
+}
+
+var NoDATA = StatusText("no data")
+var Warning = StatusText("Warning")
+var Operational = StatusText("Operational")
+
+type statusText struct {
+	string
+}
+
+func StatusText(s string) *statusText {
+	return &statusText{s}
+}
+
+func (s *statusText) String() string {
+	return s.string
+}
+
+func (s *statusText) IsOperational() bool {
+	return s == Operational
+}
+
+func (s *statusText) IsWarning() bool {
+	return s == Warning
+}
+func (m *markdown) HTML() template.HTML {
+	return template.HTML(m.html)
+}
+
+func (m *markdown) Plain() string {
+	return m.original
+}
+
 type Config struct {
-	Title           string     `toml:"title" json:"title"`
-	Categories      []Category `toml:"category" json:"categories"`
-	WorkerInterval  duration   `toml:"worker_interval" json:"-"`
-	WorkerTimeout   duration   `toml:"worker_timeout" json:"-"`
-	NumOfWorker     int        `toml:"num_of_worker" json:"-"`
-	ChannelSize     int        `toml:"channel_size" json:"-"`
-	LatestTimeRange duration   `toml:"latest_time_range" json:"-"`
-	Days            []string   `json:"days"`
+	Title            string     `toml:"title" json:"title"`
+	NavTitle         string     `toml:"nav_title" json:"nav_title"`
+	NavButtonName    string     `toml:"nav_button_name" json:"nav_button_name"`
+	NavButtonLink    string     `toml:"nav_button_link" json:"nav_button_link"`
+	HeaderMessage    markdown   `toml:"header_message" json:"-"`
+	FooterMessage    markdown   `toml:"footer_message" json:"-"`
+	Categories       []Category `toml:"category" json:"categories"`
+	WorkerInterval   duration   `toml:"worker_interval" json:"-"`
+	WorkerTimeout    duration   `toml:"worker_timeout" json:"-"`
+	NumOfWorker      int        `toml:"num_of_worker" json:"-"`
+	MaxCheckAttempts int        `toml:"max_check_attempts" json:"-"`
+	RetryInterval    duration   `toml:"retry_interval" json:"-"`
+	LatestTimeRange  duration   `toml:"latest_time_range" json:"-"`
+	Days             []string   `json:"days"`
 }
 
 type Category struct {
@@ -73,11 +141,11 @@ type Category struct {
 
 type Service struct {
 	categoryName   string
-	Name           string    `toml:"name" json:"name"`
-	Command        []string  `toml:"command" json:"command"`
-	LatestStatus   string    `json:"latest_status"`
-	LatestStatusAt time.Time `json:"latest_status_at"`
-	Statuses       []string  `json:"statuses"`
+	Name           string        `toml:"name" json:"name"`
+	Command        []string      `toml:"command" json:"command"`
+	LatestStatus   *statusText   `json:"latest_status"`
+	LatestStatusAt time.Time     `json:"latest_status_at"`
+	Statuses       []*statusText `json:"statuses"`
 }
 
 type ServiceLog struct {
@@ -107,6 +175,34 @@ func loadToml(path string) (*Config, error) {
 		}
 	}
 
+	if conf.NumOfWorker == 0 {
+		conf.NumOfWorker = 4
+	}
+	if conf.WorkerInterval.Duration == 0 {
+		// 5min
+		d, _ := time.ParseDuration("5m")
+		conf.WorkerInterval.Duration = d
+	}
+	if conf.WorkerTimeout.Duration == 0 {
+		// 30sec
+		d, _ := time.ParseDuration("30s")
+		conf.WorkerTimeout.Duration = d
+	}
+	if conf.LatestTimeRange.Duration == 0 {
+		// 30sec
+		d, _ := time.ParseDuration("1h")
+		conf.LatestTimeRange.Duration = d
+	}
+
+	if conf.MaxCheckAttempts == 0 {
+		conf.MaxCheckAttempts = 3
+	}
+	if conf.RetryInterval.Duration == 0 {
+		// 10sec
+		d, _ := time.ParseDuration("5s")
+		conf.RetryInterval.Duration = d
+	}
+
 	return &conf, nil
 }
 
@@ -134,27 +230,7 @@ func _main() int {
 
 	// initialize
 	opt.config = conf
-	if opt.config.ChannelSize == 0 {
-		opt.config.ChannelSize = 0
-	}
-	if opt.config.NumOfWorker == 0 {
-		opt.config.NumOfWorker = 4
-	}
-	if opt.config.WorkerInterval.Duration == 0 {
-		// 5min
-		d, _ := time.ParseDuration("1m")
-		opt.config.WorkerInterval.Duration = d
-	}
-	if opt.config.WorkerTimeout.Duration == 0 {
-		// 30sec
-		d, _ := time.ParseDuration("30s")
-		opt.config.WorkerTimeout.Duration = d
-	}
-	if opt.config.LatestTimeRange.Duration == 0 {
-		// 30sec
-		d, _ := time.ParseDuration("1h")
-		opt.config.LatestTimeRange.Duration = d
-	}
+
 	opt.workerChannel = make(chan Service)
 
 	// run
