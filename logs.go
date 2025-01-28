@@ -105,8 +105,8 @@ func (o *Opt) loadLogs(ctx context.Context) {
 		for _, service := range categeory.Services {
 			service.LatestStatus = NoDATA
 			service.LatestStatusAt = time.Now()
-			statuses := []*statusText{NoDATA, NoDATA, NoDATA, NoDATA, NoDATA, NoDATA, NoDATA}
-			service.Statuses = statuses
+			history := []*statusText{NoDATA, NoDATA, NoDATA, NoDATA, NoDATA, NoDATA, NoDATA}
+			service.StatusHistory = history
 		}
 	}
 	for i := 0; i < 7; i++ {
@@ -142,11 +142,11 @@ func (o *Opt) loadLogs(ctx context.Context) {
 				okCount := ok[k]
 				ngCount := failed[k]
 				if okCount == 0 && ngCount == 0 {
-					service.Statuses[i] = NoDATA
+					service.StatusHistory[i] = NoDATA
 				} else if ngCount > 0 {
-					service.Statuses[i] = Warning
+					service.StatusHistory[i] = Warning
 				} else {
-					service.Statuses[i] = Operational
+					service.StatusHistory[i] = Operational
 				}
 			}
 		}

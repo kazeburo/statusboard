@@ -59,9 +59,9 @@
 
         {{ range .Categories }}
         <div class="block">
-            <section class=" section is-small" style="padding: 2rem 0.5rem 1rem;">
+            <section class="section is-small" style="padding: 2rem 0.5rem 1rem;">
                 <h2 class="title is-4">{{ .Name }}</h2>
-                {{ if ne .Comment "" }}<p class="subtitle is-5">{{ .Comment }}</p>{{ end }}
+                {{ if ne .Comment "" }}<p class="subtitle is-6">{{ .Comment }}</p>{{ end }}
             </section>
             <table class="table is-fullwidth is-hoverable">
                 <thead>
@@ -87,20 +87,20 @@
                 <tbody>
                     {{ range .Services }}
                     <tr>
-                        <th>
+                        <th class="is-vcentered">
                             {{ .Name }}</th>
-                        <td title="{{ .LatestStatus }} {{ .LatestStatusAt }}">
+                        <td title="[{{ .LatestStatus }}] {{ .LatestStatusAt }}" class="is-vcentered">
                             <span
-                                class='is-large has-{{ if .LatestStatus.IsOperational }}text-success{{ else if .LatestStatus.IsWarning }}text-warning{{ else }}text-light{{ end }}'>
+                                class='is-size-4 has-{{ if .LatestStatus.IsOperational }}text-success{{ else if .LatestStatus.IsWarning }}text-warning{{ else }}text-light{{ end }}'>
                                 {{ if .LatestStatus.IsOperational }}🟢{{ else if .LatestStatus.IsWarning }}⚠️{{
                                 else
                                 }}➖{{ end }}
                             </span>
                         </td>
-                        {{ range .Statuses }}
-                        <td>
+                        {{ range .StatusHistory }}
+                        <td class="is-vcentered">
                             <span
-                                class='is-large has-{{ if .IsOperational }}text-success{{ else if .IsWarning }}text-warning{{ else }}text-light{{ end }}'>
+                                class='is-size-4 has-{{ if .IsOperational }}text-success{{ else if .IsWarning }}text-warning{{ else }}text-light{{ end }}'>
                                 {{ if .IsOperational }}🟢{{ else if .IsWarning }}⚠️{{ else
                                 }}➖{{ end }}
                             </span>

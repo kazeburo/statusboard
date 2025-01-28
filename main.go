@@ -90,11 +90,15 @@ var Warning = StatusText("Warning")
 var Operational = StatusText("Operational")
 
 type statusText struct {
-	string
+	string string
 }
 
 func StatusText(s string) *statusText {
 	return &statusText{s}
+}
+
+func (s *statusText) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + s.string + `"`), nil
 }
 
 func (s *statusText) String() string {
@@ -142,10 +146,10 @@ type Category struct {
 type Service struct {
 	categoryName   string
 	Name           string        `toml:"name" json:"name"`
-	Command        []string      `toml:"command" json:"command"`
+	Command        []string      `toml:"command" json:"-"`
 	LatestStatus   *statusText   `json:"latest_status"`
 	LatestStatusAt time.Time     `json:"latest_status_at"`
-	Statuses       []*statusText `json:"statuses"`
+	StatusHistory  []*statusText `json:"status_history"`
 }
 
 type ServiceLog struct {
