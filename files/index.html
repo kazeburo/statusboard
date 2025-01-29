@@ -89,7 +89,8 @@
                     <tr>
                         <th class="is-vcentered">
                             {{ .Name }}</th>
-                        <td title="[{{ .LatestStatus }}] {{ .LatestStatusAt }}" class="is-vcentered">
+                        <td title='[{{ .LatestStatus }}] {{ .LatestStatusAt.Format "2006-01-02 15:04:05 MST" }}'
+                            class="is-vcentered">
                             <span
                                 class='is-size-4 has-{{ if .LatestStatus.IsOperational }}text-success{{ else if .LatestStatus.IsWarning }}text-warning{{ else }}text-light{{ end }}'>
                                 {{ if .LatestStatus.IsOperational }}🟢{{ else if .LatestStatus.IsWarning }}⚠️{{
@@ -128,7 +129,7 @@
         <footer class="footer is-small" style="padding: 1rem;">
             <div class="content has-text-centered">
                 <p>
-                    Powered by statusboard.
+                    {{ .LastUpdatedAt.Format "2006-01-02 15:04:05 MST" }} / Powered by statusboard.
                 </p>
             </div>
         </footer>

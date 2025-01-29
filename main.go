@@ -5,9 +5,12 @@ import (
 	"context"
 	"fmt"
 	"html/template"
+	"log/slog"
 	"os"
+	"os/signal"
 	"runtime"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/BurntSushi/toml"
@@ -17,16 +20,17 @@ import (
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
+	"golang.org/x/sync/errgroup"
 )
 
 var version string
 
 type Opt struct {
-	Toml          string `long:"toml" description:"file path to toml file" required:"true"`
-	Data          string `long:"data" description:"file path to data dir" required:"true"`
-	Version       bool   `short:"v" long:"version" description:"Show version"`
-	config        *Config
-	workerChannel chan Service
+	Listen  string `short:"l" long:"listen" default:":8080" description:"address:port to bind"`
+	Toml    string `long:"toml" description:"file path to toml file" required:"true"`
+	Data    string `long:"data" description:"file path to data dir" required:"true"`
+	Version bool   `short:"v" long:"version" description:"Show version"`
+	config  *Config
 }
 
 func printVersion() {
@@ -85,7 +89,7 @@ func (m *markdown) UnmarshalText(source []byte) error {
 	return nil
 }
 
-var NoDATA = StatusText("no data")
+var NoDATA = StatusText("NoData")
 var Warning = StatusText("Warning")
 var Operational = StatusText("Operational")
 
@@ -135,6 +139,7 @@ type Config struct {
 	RetryInterval    duration   `toml:"retry_interval" json:"-"`
 	LatestTimeRange  duration   `toml:"latest_time_range" json:"-"`
 	Days             []string   `json:"days"`
+	LastUpdatedAt    time.Time  `json:"last_updated_at"`
 }
 
 type Category struct {
@@ -206,6 +211,7 @@ func loadToml(path string) (*Config, error) {
 		d, _ := time.ParseDuration("5s")
 		conf.RetryInterval.Duration = d
 	}
+	conf.LastUpdatedAt = time.Now()
 
 	return &conf, nil
 }
@@ -231,22 +237,25 @@ func _main() int {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1
 	}
-
-	// initialize
 	opt.config = conf
 
-	opt.workerChannel = make(chan Service)
-
 	// run
-	ctxWorker := context.Background()
-	ctxWorker, cancelWorker := context.WithCancel(ctxWorker)
+	ctx, done := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer done()
+	g, ctx := errgroup.WithContext(ctx)
 
-	defer cancelWorker()
-	go opt.startWorker(ctxWorker)
-	go opt.httpserver()
-
-	chWorker := make(chan struct{})
-	<-chWorker
+	g.Go(func() error {
+		return opt.startWorker(ctx)
+	})
+	g.Go(func() error {
+		return opt.startServer(ctx)
+	})
+	if err := g.Wait(); err != nil {
+		if !errors.Is(err, context.Canceled) {
+			slog.Warn("error in service", slog.Any("error", err))
+			return 1
+		}
+	}
 	return 0
 }
 

@@ -1,14 +1,16 @@
 package main
 
 import (
+	"context"
 	_ "embed"
+	"errors"
 	"io"
 	"net/http"
 	"text/template"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/pkg/errors"
 )
 
 //go:embed files/index.html
@@ -30,8 +32,9 @@ func (o *Opt) handleIndex(c echo.Context) error {
 	return c.Render(http.StatusOK, "index", o.config)
 }
 
-func (o *Opt) httpserver() error {
+func (o *Opt) startServer(ctx context.Context) error {
 	e := echo.New()
+	e.HideBanner = true
 	e.Debug = false
 
 	renderer := &Template{
@@ -57,9 +60,20 @@ func (o *Opt) httpserver() error {
 	e.GET("/", o.handleIndex)
 	e.GET("/_json", o.handleJSON)
 
-	// Start server
-	if err := e.Start(":8080"); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		return err
+	c := make(chan error, 1)
+	go func() {
+		c <- e.Start(o.Listen)
+	}()
+	var err error
+	select {
+	case <-ctx.Done():
+		bg, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		err = e.Shutdown(bg)
+	case err = <-c:
 	}
-	return nil
+	if errors.Is(err, http.ErrServerClosed) {
+		return nil
+	}
+	return err
 }

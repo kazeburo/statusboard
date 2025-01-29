@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"time"
@@ -48,7 +48,7 @@ func (o *Opt) loadLog(_ context.Context, d time.Time) (time.Time, counter, count
 		// JSON をデコード
 		err := json.Unmarshal(scanner.Bytes(), servicelog)
 		if err != nil {
-			log.Printf("Error decoding JSON: %v", err)
+			slog.Warn("Error decoding JSON", slog.Any("error", err))
 			continue
 		}
 		lastUpdated = servicelog.Time
@@ -89,7 +89,7 @@ func (o *Opt) loadLog(_ context.Context, d time.Time) (time.Time, counter, count
 
 	// エラーチェック
 	if err := scanner.Err(); err != nil {
-		log.Printf("Error reading file: %v", err)
+		slog.Warn("Error reading file", slog.Any("error", err))
 	}
 
 	return lastUpdated, ok, failed, latestOk, latestFailed, nil
@@ -114,7 +114,7 @@ func (o *Opt) loadLogs(ctx context.Context) {
 		lastUpdated, ok, failed, latestOk, latestFailed, err := o.loadLog(ctx, d)
 		d = d.Add(-1 * time.Hour * 24)
 		if err != nil && err == os.ErrNotExist {
-			log.Printf("failed to loadlog %v", err)
+			slog.Warn("failed to loadlog", slog.Any("error", err))
 			continue
 		}
 		if i == 0 {
@@ -152,4 +152,5 @@ func (o *Opt) loadLogs(ctx context.Context) {
 		}
 	}
 	o.config.Days = days
+	o.config.LastUpdatedAt = time.Now()
 }

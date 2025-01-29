@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os/exec"
 	"time"
 
@@ -20,7 +20,7 @@ func (o *Opt) execServiceCommand(ctx context.Context, service *Service) (int, st
 	output, err := exec.CommandContext(ctx, service.Command[0], args...).CombinedOutput()
 
 	if err != nil {
-		log.Printf("run command error. service: %v error: %v", service, err)
+		slog.Warn("run command error. service", slog.Any("service", service), slog.Any("error", err))
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			return exiterr.ExitCode(), string(output), nil
 		} else {
@@ -94,7 +94,7 @@ func (o *Opt) execWorker(ctx context.Context) error {
 				}
 				err := o.appendServiceLog(servicelog)
 				if err != nil {
-					log.Printf("error in appendlog %v", err)
+					slog.Warn("error in appendlog", slog.Any("error", err))
 				}
 				defer cancel()
 			})
