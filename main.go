@@ -218,7 +218,7 @@ func loadToml(path string) (*Config, error) {
 		d, _ := time.ParseDuration("5s")
 		conf.RetryInterval.Duration = d
 	}
-	if conf.PoweredBy.Plain() == "" {
+	if conf.PoweredBy == nil || conf.PoweredBy.Plain() == "" {
 		conf.PoweredBy = Markdown("Powered by statusboard.")
 	}
 	conf.LastUpdatedAt = time.Now()
