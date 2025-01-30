@@ -1,22 +1,33 @@
+# ページのtitleタグの内容
 title = "Status Page"
+# ナビゲーションバー上のタイトル markdown可
 nav_title = "Status Page / [DEMO](https://github.com/kazeburo/statusboard/) / <strike>aaa</strike>"
+# ナビゲーションバー上のボタンの名前
 nav_button_name = "HOME"
+# ナビゲーションバー上のボタンのリンク先
 nav_button_link = "/"
 
+# トップのメッセージ markdown可
 header_message = ""
-
+# フッターメッセージ markdown可
 footer_message = """
 ページ上のメッセージ
 - markdownが書けます
 - [GitHub](https://github.com/)
 """
 
+# ヘルスチェックの並列稼働数
 num_of_worker = 4
-
+# ヘルスチェックのリトライ回数
+max_check_attempts = 3
+# ヘルスチェックに失敗した際のスリープ時間
+retry_interval = "10s"
+# ヘルスチェックの間隔
 worker_interval = "1m"
+# ヘルスチェックコマンドの最大待機時間
 worker_timeoout = "30s"
+# 最新のステータスとして扱う時間範囲
 latest_time_range = "1h"
-
 
 [[category]]
 name = "グローバル"
