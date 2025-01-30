@@ -124,13 +124,15 @@
         </div>
         {{ end }}
 
-        <div class="block" style="border-bottom: solid 1px #ccc;"></div>
+        <div class="block">
+            <div class="content has-text-centered">
+                <p>Last updated at {{ .LastUpdatedAt.Format "2006-01-02 15:04:05 MST" }}</p>
+            </div>
+        </div>
 
         <footer class="footer is-small" style="padding: 1rem;">
             <div class="content has-text-centered">
-                <p>
-                    {{ .LastUpdatedAt.Format "2006-01-02 15:04:05 MST" }} / Powered by statusboard.
-                </p>
+                {{ .PoweredBy.HTML }}
             </div>
         </footer>
     </div>

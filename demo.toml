@@ -16,6 +16,9 @@ footer_message = """
 - [GitHub](https://github.com/)
 """
 
+# フッターテキスト markdown可
+powered_by = "Powered by statusboard"
+
 # ヘルスチェックの並列稼働数
 num_of_worker = 4
 # ヘルスチェックのリトライ回数

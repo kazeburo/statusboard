@@ -68,6 +68,13 @@ type markdown struct {
 	html     string
 }
 
+func Markdown(s string) *markdown {
+	m := &markdown{}
+	err := m.UnmarshalText([]byte(s))
+	slog.Error("failed to convert markdown", slog.Any("error", err))
+	return m
+}
+
 func (m *markdown) UnmarshalText(source []byte) error {
 	md := goldmark.New(
 		goldmark.WithParserOptions(
@@ -87,9 +94,13 @@ func (m *markdown) UnmarshalText(source []byte) error {
 	return nil
 }
 
-var NoDATA = StatusText("NoData")
-var Warning = StatusText("Warning")
-var Operational = StatusText("Operational")
+func (m *markdown) HTML() template.HTML {
+	return template.HTML(m.html)
+}
+
+func (m *markdown) Plain() string {
+	return m.original
+}
 
 type statusText struct {
 	string string
@@ -98,6 +109,10 @@ type statusText struct {
 func StatusText(s string) *statusText {
 	return &statusText{s}
 }
+
+var NoDATA = StatusText("NoData")
+var Warning = StatusText("Warning")
+var Operational = StatusText("Operational")
 
 func (s *statusText) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.string + `"`), nil
@@ -114,21 +129,15 @@ func (s *statusText) IsOperational() bool {
 func (s *statusText) IsWarning() bool {
 	return s == Warning
 }
-func (m *markdown) HTML() template.HTML {
-	return template.HTML(m.html)
-}
-
-func (m *markdown) Plain() string {
-	return m.original
-}
 
 type Config struct {
 	Title            string     `toml:"title" json:"title"`
-	NavTitle         markdown   `toml:"nav_title" json:"nav_title"`
+	NavTitle         *markdown  `toml:"nav_title" json:"nav_title"`
 	NavButtonName    string     `toml:"nav_button_name" json:"nav_button_name"`
 	NavButtonLink    string     `toml:"nav_button_link" json:"nav_button_link"`
-	HeaderMessage    markdown   `toml:"header_message" json:"-"`
-	FooterMessage    markdown   `toml:"footer_message" json:"-"`
+	HeaderMessage    *markdown  `toml:"header_message" json:"-"`
+	FooterMessage    *markdown  `toml:"footer_message" json:"-"`
+	PoweredBy        *markdown  `toml:"powered_by" json:"-"`
 	Categories       []Category `toml:"category" json:"categories"`
 	WorkerInterval   duration   `toml:"worker_interval" json:"-"`
 	WorkerTimeout    duration   `toml:"worker_timeout" json:"-"`
@@ -208,6 +217,9 @@ func loadToml(path string) (*Config, error) {
 		// 10sec
 		d, _ := time.ParseDuration("5s")
 		conf.RetryInterval.Duration = d
+	}
+	if conf.PoweredBy.Plain() == "" {
+		conf.PoweredBy = Markdown("Powered by statusboard.")
 	}
 	conf.LastUpdatedAt = time.Now()
 
