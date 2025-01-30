@@ -17,7 +17,6 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/pkg/errors"
 	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"golang.org/x/sync/errgroup"
@@ -71,13 +70,12 @@ type markdown struct {
 
 func (m *markdown) UnmarshalText(source []byte) error {
 	md := goldmark.New(
-		goldmark.WithExtensions(extension.GFM),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
 		),
 		goldmark.WithRendererOptions(
 			html.WithHardWraps(),
-			html.WithXHTML(),
+			html.WithUnsafe(),
 		),
 	)
 	var buf bytes.Buffer
@@ -126,7 +124,7 @@ func (m *markdown) Plain() string {
 
 type Config struct {
 	Title            string     `toml:"title" json:"title"`
-	NavTitle         string     `toml:"nav_title" json:"nav_title"`
+	NavTitle         markdown   `toml:"nav_title" json:"nav_title"`
 	NavButtonName    string     `toml:"nav_button_name" json:"nav_button_name"`
 	NavButtonLink    string     `toml:"nav_button_link" json:"nav_button_link"`
 	HeaderMessage    markdown   `toml:"header_message" json:"-"`
