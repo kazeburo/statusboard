@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.6](https://github.com/kazeburo/statusboard/compare/v0.0.5...v0.0.6) - 2025-01-30
+- fix action checkout token by @kazeburo in https://github.com/kazeburo/statusboard/pull/7
+- update deps by @kazeburo in https://github.com/kazeburo/statusboard/pull/9
+
 ## [v0.0.5](https://github.com/kazeburo/statusboard/compare/v0.0.4...v0.0.5) - 2025-01-30
 - fixed powered-by nil pointer dereference by @kazeburo in https://github.com/kazeburo/statusboard/pull/5
 
