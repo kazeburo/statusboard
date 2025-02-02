@@ -25,11 +25,12 @@ import (
 var version string
 
 type Opt struct {
-	Listen  string `short:"l" long:"listen" default:":8080" description:"address:port to bind"`
-	Toml    string `long:"toml" description:"file path to toml file" required:"true"`
-	Data    string `long:"data" description:"file path to data dir" required:"true"`
-	Version bool   `short:"v" long:"version" description:"Show version"`
-	config  *Config
+	Listen   string `short:"l" long:"listen" default:":8080" description:"address:port to bind"`
+	Toml     string `long:"toml" description:"file path to toml file" required:"true"`
+	Data     string `long:"data" description:"file path to data dir" required:"true"`
+	Version  bool   `short:"v" long:"version" description:"Show version"`
+	config   *Config
+	htmlBlob []byte
 }
 
 func printVersion() {
@@ -248,6 +249,13 @@ func _main() int {
 		return 1
 	}
 	opt.config = conf
+
+	// render html
+	err = opt.renderStatusPage(context.Background())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return 1
+	}
 
 	// run
 	ctx, done := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)

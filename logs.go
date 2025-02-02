@@ -2,14 +2,20 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"context"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"text/template"
 	"time"
 )
+
+//go:embed files/index.html
+var indexhtml []byte
 
 type counter map[string]int
 
@@ -153,4 +159,16 @@ func (o *Opt) loadLogs(ctx context.Context) {
 	}
 	o.config.Days = days
 	o.config.LastUpdatedAt = time.Now()
+}
+
+func (o *Opt) renderStatusPage(ctx context.Context) error {
+	o.loadLogs(ctx)
+	r := template.Must(template.New("index").Parse(string(indexhtml)))
+	w := &bytes.Buffer{}
+	err := r.ExecuteTemplate(w, "index", o.config)
+	if err != nil {
+		return err
+	}
+	o.htmlBlob = w.Bytes()
+	return nil
 }
