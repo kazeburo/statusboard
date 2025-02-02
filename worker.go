@@ -101,13 +101,12 @@ func (o *Opt) execWorker(ctx context.Context) error {
 		}
 	}
 	pool.StopWait()
-	o.loadLogs(ctx)
+	o.renderStatusPage(ctx)
 
 	return nil
 }
 
 func (o *Opt) startWorker(ctx context.Context) error {
-	o.loadLogs(ctx)
 	t := time.NewTicker(o.config.WorkerInterval.Duration)
 	defer t.Stop()
 LOOP:
