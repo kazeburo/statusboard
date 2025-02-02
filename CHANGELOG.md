@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.7](https://github.com/kazeburo/statusboard/compare/v0.0.6...v0.0.7) - 2025-02-02
+- render a status page in the worker by @kazeburo in https://github.com/kazeburo/statusboard/pull/11
+
 ## [v0.0.6](https://github.com/kazeburo/statusboard/compare/v0.0.5...v0.0.6) - 2025-01-30
 - fix action checkout token by @kazeburo in https://github.com/kazeburo/statusboard/pull/7
 - update deps by @kazeburo in https://github.com/kazeburo/statusboard/pull/9
