@@ -72,7 +72,9 @@ type markdown struct {
 func Markdown(s string) *markdown {
 	m := &markdown{}
 	err := m.UnmarshalText([]byte(s))
-	slog.Error("failed to convert markdown", slog.Any("error", err))
+	if err != nil {
+		slog.Error("failed to convert markdown", slog.Any("error", err))
+	}
 	return m
 }
 
