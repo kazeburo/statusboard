@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.8](https://github.com/kazeburo/statusboard/compare/v0.0.7...v0.0.8) - 2025-02-03
+- fix markdown null errorlog by @kazeburo in https://github.com/kazeburo/statusboard/pull/13
+
 ## [v0.0.7](https://github.com/kazeburo/statusboard/compare/v0.0.6...v0.0.7) - 2025-02-02
 - render a status page in the worker by @kazeburo in https://github.com/kazeburo/statusboard/pull/11
 
