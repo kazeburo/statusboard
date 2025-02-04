@@ -10,6 +10,22 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+func (o *Opt) ifModifiedSince(r *http.Request) bool {
+	ims := r.Header.Get("If-Modified-Since")
+	if ims == "" {
+		return true
+	}
+	t, err := http.ParseTime(ims)
+	if err != nil {
+		return true
+	}
+	lm := o.config.LastUpdatedAt.Truncate(time.Second)
+	if ret := lm.Compare(t); ret <= 0 {
+		return false
+	}
+	return true
+}
+
 func (o *Opt) handleJSON(c echo.Context) error {
 	return c.JSON(http.StatusOK, o.config)
 }
@@ -37,9 +53,19 @@ func (o *Opt) startServer(ctx context.Context) error {
 	}))
 	e.Use(middleware.Recover())
 
+	// Route level middleware
+	conditionalGET := func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if !o.ifModifiedSince(c.Request()) {
+				return c.NoContent(http.StatusNotModified)
+			}
+			c.Response().Header().Set("Last-Modified", o.config.LastUpdatedAt.UTC().Format(http.TimeFormat))
+			return next(c)
+		}
+	}
 	// Routes
-	e.GET("/", o.handleIndex)
-	e.GET("/_json", o.handleJSON)
+	e.GET("/", o.handleIndex, conditionalGET)
+	e.GET("/_json", o.handleJSON, conditionalGET)
 
 	c := make(chan error, 1)
 	go func() {
