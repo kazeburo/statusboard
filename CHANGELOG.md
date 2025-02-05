@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.9](https://github.com/kazeburo/statusboard/compare/v0.0.8...v0.0.9) - 2025-02-05
+- introduced conditional get by @kazeburo in https://github.com/kazeburo/statusboard/pull/15
+
 ## [v0.0.8](https://github.com/kazeburo/statusboard/compare/v0.0.7...v0.0.8) - 2025-02-03
 - fix markdown null errorlog by @kazeburo in https://github.com/kazeburo/statusboard/pull/13
 
