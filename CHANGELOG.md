@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.10](https://github.com/kazeburo/statusboard/compare/v0.0.9...v0.0.10) - 2025-02-06
+- refactor must duration and markdown by @kazeburo in https://github.com/kazeburo/statusboard/pull/17
+- use goccy json by @kazeburo in https://github.com/kazeburo/statusboard/pull/19
+
 ## [v0.0.9](https://github.com/kazeburo/statusboard/compare/v0.0.8...v0.0.9) - 2025-02-05
 - introduced conditional get by @kazeburo in https://github.com/kazeburo/statusboard/pull/15
 
