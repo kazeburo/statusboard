@@ -5,13 +5,14 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"text/template"
 	"time"
+
+	"github.com/goccy/go-json"
 )
 
 //go:embed files/index.html
