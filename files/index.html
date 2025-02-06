@@ -47,7 +47,7 @@
 
         <div class="block" style="border-bottom: solid 1px #ccc;"></div>
 
-        {{ if ne .HeaderMessage.Plain "" }}
+        {{ if ne .HeaderMessage.IsEmpty true }}
         <div class="block">
             <div class="notification">
                 <div class="content">
@@ -114,7 +114,7 @@
         </div>
         {{ end }}
 
-        {{ if ne .FooterMessage.Plain "" }}
+        {{ if ne .FooterMessage.IsEmpty true }}
         <div class="block" style="margin-top: 50px;">
             <div class="notification">
                 <div class="content">
