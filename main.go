@@ -53,6 +53,10 @@ func (d *duration) UnmarshalText(text []byte) error {
 	return err
 }
 
+func (d *duration) IsZero() bool {
+	return d.Duration == 0
+}
+
 func (d *duration) ShortString() string {
 	s := d.Duration.String()
 	if strings.HasSuffix(s, "m0s") {
@@ -64,16 +68,24 @@ func (d *duration) ShortString() string {
 	return s
 }
 
+func MustDuration(s string) duration {
+	d, err := time.ParseDuration(s)
+	if err != nil {
+		panic(fmt.Sprintf("failed to parse duration: %v", err))
+	}
+	return duration{d}
+}
+
 type markdown struct {
 	original string
 	html     string
 }
 
-func Markdown(s string) *markdown {
+func MustMarkdown(s string) *markdown {
 	m := &markdown{}
 	err := m.UnmarshalText([]byte(s))
 	if err != nil {
-		slog.Error("failed to convert markdown", slog.Any("error", err))
+		panic(fmt.Sprintf("failed to convert markdown: %v", err))
 	}
 	return m
 }
@@ -101,8 +113,8 @@ func (m *markdown) HTML() template.HTML {
 	return template.HTML(m.html)
 }
 
-func (m *markdown) Plain() string {
-	return m.original
+func (m *markdown) IsEmpty() bool {
+	return m.original == ""
 }
 
 type statusText struct {
@@ -197,32 +209,24 @@ func loadToml(path string) (*Config, error) {
 	if conf.NumOfWorker == 0 {
 		conf.NumOfWorker = 4
 	}
-	if conf.WorkerInterval.Duration == 0 {
-		// 5min
-		d, _ := time.ParseDuration("5m")
-		conf.WorkerInterval.Duration = d
+	if conf.WorkerInterval.IsZero() {
+		conf.WorkerInterval = MustDuration("5m")
 	}
-	if conf.WorkerTimeout.Duration == 0 {
-		// 30sec
-		d, _ := time.ParseDuration("30s")
-		conf.WorkerTimeout.Duration = d
+	if conf.WorkerTimeout.IsZero() {
+		conf.WorkerTimeout = MustDuration("30s")
 	}
-	if conf.LatestTimeRange.Duration == 0 {
-		// 30sec
-		d, _ := time.ParseDuration("1h")
-		conf.LatestTimeRange.Duration = d
+	if conf.LatestTimeRange.IsZero() {
+		conf.LatestTimeRange = MustDuration("1h")
 	}
 
 	if conf.MaxCheckAttempts == 0 {
 		conf.MaxCheckAttempts = 3
 	}
-	if conf.RetryInterval.Duration == 0 {
-		// 10sec
-		d, _ := time.ParseDuration("5s")
-		conf.RetryInterval.Duration = d
+	if conf.RetryInterval.IsZero() {
+		conf.RetryInterval = MustDuration("5s")
 	}
-	if conf.PoweredBy == nil || conf.PoweredBy.Plain() == "" {
-		conf.PoweredBy = Markdown("Powered by statusboard.")
+	if conf.PoweredBy == nil || conf.PoweredBy.IsEmpty() {
+		conf.PoweredBy = MustMarkdown("Powered by statusboard.")
 	}
 	conf.LastUpdatedAt = time.Now()
 
@@ -251,6 +255,13 @@ func _main() int {
 		return 1
 	}
 	opt.config = conf
+
+	// check open file in data dir
+	err = opt.createServiceLog()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return 1
+	}
 
 	// render html
 	err = opt.renderStatusPage(context.Background())

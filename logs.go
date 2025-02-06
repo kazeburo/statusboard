@@ -19,6 +19,18 @@ var indexhtml []byte
 
 type counter map[string]int
 
+func (o *Opt) createServiceLog() error {
+	day := time.Now().Format("20060102")
+	path := filepath.Join(o.Data, fmt.Sprintf("log%s.txt", day))
+
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	return nil
+}
+
 func (o *Opt) appendServiceLog(log *ServiceLog) error {
 	day := log.Time.Format("20060102")
 	path := filepath.Join(o.Data, fmt.Sprintf("log%s.txt", day))
