@@ -18,8 +18,6 @@ import (
 //go:embed files/index.html
 var indexhtml []byte
 
-type counter map[string]int
-
 func (o *Opt) createServiceLog() error {
 	day := time.Now().Format("20060102")
 	path := filepath.Join(o.Data, fmt.Sprintf("log%s.txt", day))
@@ -44,18 +42,15 @@ func (o *Opt) appendServiceLog(log *ServiceLog) error {
 	return json.NewEncoder(file).Encode(log)
 }
 
-func (o *Opt) loadLog(_ context.Context, d time.Time) (time.Time, counter, counter, counter, counter, error) {
+func (o *Opt) loadServiceLog(_ context.Context, d time.Time) (time.Time, []*ServiceLog, []*ServiceLog, error) {
+	logs := make([]*ServiceLog, 0, 500)
+	latestLogs := make([]*ServiceLog, 0, 500)
+
 	day := d.Format("20060102")
 	path := filepath.Join(o.Data, fmt.Sprintf("log%s.txt", day))
-
-	ok := map[string]int{}
-	failed := map[string]int{}
-	latestOk := map[string]int{}
-	latestFailed := map[string]int{}
-
 	file, err := os.Open(path)
 	if err != nil {
-		return time.Now(), ok, failed, latestOk, latestFailed, err
+		return time.Now(), logs, latestLogs, err
 	}
 	defer file.Close()
 
@@ -71,50 +66,53 @@ func (o *Opt) loadLog(_ context.Context, d time.Time) (time.Time, counter, count
 			continue
 		}
 		lastUpdated = servicelog.Time
-		k := joinName(servicelog.CategoryName, servicelog.Name)
+		logs = append(logs, servicelog)
 
-		if servicelog.Status == 0 {
-			if count, exist := ok[k]; exist {
-				ok[k] = count + 1
-			} else {
-				ok[k] = 1
-			}
-		} else {
-			if count, exist := failed[k]; exist {
-				failed[k] = count + 1
-			} else {
-				failed[k] = 1
-			}
-		}
-
+		// 直近のログ
 		now := time.Now()
 		diff := now.Sub(servicelog.Time)
 		if diff <= o.config.LatestTimeRange.Duration {
-			if servicelog.Status == 0 {
-				if count, exist := latestOk[k]; exist {
-					latestOk[k] = count + 1
-				} else {
-					latestOk[k] = 1
-				}
-			} else {
-				if count, exist := latestFailed[k]; exist {
-					latestFailed[k] = count + 1
-				} else {
-					latestFailed[k] = 1
-				}
-			}
+			latestLogs = append(latestLogs, servicelog)
 		}
 	}
-
 	// エラーチェック
 	if err := scanner.Err(); err != nil {
 		slog.Warn("Error reading file", slog.Any("error", err))
 	}
 
-	return lastUpdated, ok, failed, latestOk, latestFailed, nil
+	return lastUpdated, logs, latestLogs, nil
 }
 
-func (o *Opt) loadLogs(ctx context.Context) {
+func sameCommand(c []string, s []string) bool {
+	if len(c) != len(s) {
+		return false
+	}
+	for i := len(c) - 1; i >= 0; i-- {
+		if c[i] != s[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func (o *Opt) countByService(logs []*ServiceLog, service *Service) (int, int) {
+	ok := 0
+	fail := 0
+	for _, log := range logs {
+		// カテゴリ名とサービス名が一致 or コマンドが一緒する行を対象とする
+		if (log.CategoryName == service.categoryName && log.Name == service.Name) ||
+			sameCommand(log.Command, service.Command) {
+			if log.Status == 0 {
+				ok++
+			} else {
+				fail++
+			}
+		}
+	}
+	return ok, fail
+}
+
+func (o *Opt) loadLog(ctx context.Context) {
 	d := time.Now()
 	days := make([]string, 0, 10)
 	days = append(days, o.config.LatestTimeRange.ShortString())
@@ -130,7 +128,7 @@ func (o *Opt) loadLogs(ctx context.Context) {
 	}
 	for i := 0; i < 7; i++ {
 		days = append(days, d.Format("01/02"))
-		lastUpdated, ok, failed, latestOk, latestFailed, err := o.loadLog(ctx, d)
+		lastUpdated, logs, latestLogs, err := o.loadServiceLog(ctx, d)
 		d = d.Add(-1 * time.Hour * 24)
 		if err != nil && err == os.ErrNotExist {
 			slog.Warn("failed to loadlog", slog.Any("error", err))
@@ -140,13 +138,11 @@ func (o *Opt) loadLogs(ctx context.Context) {
 			// latestをいれる
 			for _, categeory := range o.config.Categories {
 				for _, service := range categeory.Services {
-					k := joinName(categeory.Name, service.Name)
-					okCount := latestOk[k]
-					ngCount := latestFailed[k]
+					ok, fail := o.countByService(latestLogs, service)
 					service.LatestStatusAt = lastUpdated
-					if okCount == 0 && ngCount == 0 {
+					if ok == 0 && fail == 0 {
 						service.LatestStatus = NoDATA
-					} else if ngCount > 0 {
+					} else if fail > 0 {
 						service.LatestStatus = Warning
 					} else {
 						service.LatestStatus = Operational
@@ -154,15 +150,13 @@ func (o *Opt) loadLogs(ctx context.Context) {
 				}
 			}
 		}
-		// 直近
 		for _, categeory := range o.config.Categories {
 			for _, service := range categeory.Services {
-				k := joinName(categeory.Name, service.Name)
-				okCount := ok[k]
-				ngCount := failed[k]
-				if okCount == 0 && ngCount == 0 {
+				ok, fail := o.countByService(logs, service)
+				service.LatestStatusAt = lastUpdated
+				if ok == 0 && fail == 0 {
 					service.StatusHistory[i] = NoDATA
-				} else if ngCount > 0 {
+				} else if fail > 0 {
 					service.StatusHistory[i] = Warning
 				} else {
 					service.StatusHistory[i] = Operational
@@ -175,7 +169,7 @@ func (o *Opt) loadLogs(ctx context.Context) {
 }
 
 func (o *Opt) renderStatusPage(ctx context.Context) error {
-	o.loadLogs(ctx)
+	o.loadLog(ctx)
 	r := template.Must(template.New("index").Parse(string(indexhtml)))
 	w := &bytes.Buffer{}
 	err := r.ExecuteTemplate(w, "index", o.config)

@@ -233,10 +233,6 @@ func loadToml(path string) (*Config, error) {
 	return &conf, nil
 }
 
-func joinName(category, name string) string {
-	return fmt.Sprintf("%s&&&&%s", category, name)
-}
-
 func _main() int {
 	opt := &Opt{}
 	psr := flags.NewParser(opt, flags.HelpFlag|flags.PassDoubleDash)

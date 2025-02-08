@@ -1,7 +1,7 @@
 # ページのtitleタグの内容
 title = "Status Page"
 # ナビゲーションバー上のタイトル markdown可
-nav_title = "Status Page / [DEMO](https://github.com/kazeburo/statusboard/) / <strike>aaa</strike>"
+nav_title = "[Status Page](https://github.com/kazeburo/statusboard/) DEMO"
 # ナビゲーションバー上のボタンの名前
 nav_button_name = "HOME"
 # ナビゲーションバー上のボタンのリンク先
@@ -24,7 +24,7 @@ num_of_worker = 4
 # ヘルスチェックのリトライ回数
 max_check_attempts = 3
 # ヘルスチェックに失敗した際のスリープ時間
-retry_interval = "10s"
+retry_interval = "3s"
 # ヘルスチェックの間隔
 worker_interval = "1m"
 # ヘルスチェックコマンドの最大待機時間
