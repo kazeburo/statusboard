@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.1.1](https://github.com/kazeburo/statusboard/compare/v0.1.0...v0.1.1) - 2025-02-08
+- refacot loadlogs for changing filter by @kazeburo in https://github.com/kazeburo/statusboard/pull/20
+
 ## [v0.0.10](https://github.com/kazeburo/statusboard/compare/v0.0.9...v0.0.10) - 2025-02-06
 - refactor must duration and markdown by @kazeburo in https://github.com/kazeburo/statusboard/pull/17
 - use goccy json by @kazeburo in https://github.com/kazeburo/statusboard/pull/19
