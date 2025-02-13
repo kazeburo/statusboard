@@ -147,9 +147,9 @@ func (s *statusText) IsWarning() bool {
 
 type Config struct {
 	Title            string     `toml:"title" json:"title"`
-	NavTitle         *markdown  `toml:"nav_title" json:"nav_title"`
-	NavButtonName    string     `toml:"nav_button_name" json:"nav_button_name"`
-	NavButtonLink    string     `toml:"nav_button_link" json:"nav_button_link"`
+	NavTitle         *markdown  `toml:"nav_title" json:"-"`
+	NavButtonName    string     `toml:"nav_button_name" json:"-"`
+	NavButtonLink    string     `toml:"nav_button_link" json:"-"`
 	HeaderMessage    *markdown  `toml:"header_message" json:"-"`
 	FooterMessage    *markdown  `toml:"footer_message" json:"-"`
 	PoweredBy        *markdown  `toml:"powered_by" json:"-"`
