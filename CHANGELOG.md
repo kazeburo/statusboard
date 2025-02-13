@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.1.2](https://github.com/kazeburo/statusboard/compare/v0.1.1...v0.1.2) - 2025-02-13
+- link to json url by @kazeburo in https://github.com/kazeburo/statusboard/pull/22
+
 ## [v0.1.1](https://github.com/kazeburo/statusboard/compare/v0.1.0...v0.1.1) - 2025-02-08
 - refacot loadlogs for changing filter by @kazeburo in https://github.com/kazeburo/statusboard/pull/20
 
