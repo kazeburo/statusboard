@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.1.3](https://github.com/kazeburo/statusboard/compare/v0.1.2...v0.1.3) - 2025-02-13
+- fix html by @kazeburo in https://github.com/kazeburo/statusboard/pull/24
+
 ## [v0.1.2](https://github.com/kazeburo/statusboard/compare/v0.1.1...v0.1.2) - 2025-02-13
 - link to json url by @kazeburo in https://github.com/kazeburo/statusboard/pull/22
 
