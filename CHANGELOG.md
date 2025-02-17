@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.1.4](https://github.com/kazeburo/statusboard/compare/v0.1.3...v0.1.4) - 2025-02-17
+- refresh ui by @kazeburo in https://github.com/kazeburo/statusboard/pull/26
+
 ## [v0.1.3](https://github.com/kazeburo/statusboard/compare/v0.1.2...v0.1.3) - 2025-02-13
 - fix html by @kazeburo in https://github.com/kazeburo/statusboard/pull/24
 
