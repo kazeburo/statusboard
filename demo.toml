@@ -47,6 +47,7 @@ command = ["sh", "-c", "echo stdout; echo 1>&2 stderr && exit 3"]
 [[category]]
 name = "プライベート"
 comment = "プライベートサービス"
+hide = true
 
 [[category.service]]
 name = "DNSサービス"

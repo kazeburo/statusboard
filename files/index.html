@@ -6,12 +6,14 @@
     <meta charset="utf-8">
     <title>{{ .Title }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .table th:first-child,
         .table td:first-child {
             width: 20% !important;
             text-align: left;
-            border-right: solid 1px #ccc;
         }
 
         .table th,
@@ -20,6 +22,7 @@
             text-align: center !important;
         }
     </style>
+
 </head>
 
 <body>
@@ -56,65 +59,74 @@
         </div>
         {{ end }}
 
-        {{ range .Categories }}
-        <div class="block">
-            <section class="section is-small" style="padding: 2rem 0.5rem 1rem;">
-                <h2 class="title is-4">{{ .Name }}</h2>
-                {{ if ne .Comment "" }}<p class="subtitle is-6">{{ .Comment }}</p>{{ end }}
-            </section>
-            <table class="table is-fullwidth is-hoverable">
-                <thead>
-                    <tr>
-                        <th>
-                        </th>
-                        {{ range $.Days }}
-                        <th>
-                            {{ . }}</td>
+        {{ range $i, $v := .Categories }}
+        <div class="box px-3 pt-3 pb-0">
+            <div class="columns mb-0">
+                <div class="column is-two-thirds">
+                    <h2 class="title is-5 pt-1">
+                        <span class="icon"><i
+                                class="fas fa-caret-{{ if .Hide }}right{{ else }}down{{ end }} toggle-caret"
+                                id="caret-{{ $i }}"></i></span>
+                        {{ .Name }}
+                    </h2>
+                </div>
+                <div class="column has-text-right"><button
+                        class="button is-small {{ if .LatestStatus.IsOperational }}is-success{{ else if .LatestStatus.IsOutage }}is-warning{{ else }}is-light{{ end }} toggle-button"
+                        id="button-{{ $i}}">
+                        <span class="icon is-small"><i
+                                class="fas fa-{{ if .LatestStatus.IsOperational }}check-square{{ else if .LatestStatus.IsOutage }}exclamation-triangle{{ else }}minus{{ end }}"></i></span>
+                        <span>{{ .LatestStatus }}</span>
+                    </button>
+                </div>
+            </div>
+            {{ if ne .Comment "" }}<div class="content pb-3 mb-0">
+                <p>{{ .Comment }}</p>
+            </div>{{ end }}
+            <div class="block {{ if .Hide }}is-hidden{{ end }} pb-2" id="table-{{ $i }}">
+                <table class="table is-fullwidth is-hoverable is-narrow">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            {{ range $.Days }}
+                            <th>{{ . }}</td>
+                                {{ end }}
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            {{ range $.Days }}
+                            <th>{{ . }}</td>
+                                {{ end }}
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {{ range .Services }}
+                        <tr>
+                            <th class="is-vcentered">{{ .Name }}</th>
+                            <td title='[{{ .LatestStatus }}] {{ .LatestStatusAt.Format "2006-01-02 15:04:05 MST" }}'
+                                class="is-vcentered">
+                                <span
+                                    class="icon has-{{ if .LatestStatus.IsOperational }}text-success{{ else if .LatestStatus.IsOutage }}text-warning{{ else }}text-light{{ end }}"><i
+                                        class="fas fa-{{ if .LatestStatus.IsOperational }}check-square{{ else if .LatestStatus.IsOutage }}exclamation-triangle{{ else }}minus{{ end }}"></i></span>
+                            </td>
+                            {{ range .StatusHistory }}
+                            <td class="is-vcentered">
+                                <span
+                                    class="icon has-{{ if .IsOperational }}text-success{{ else if .IsOutage }}text-warning{{ else }}text-light{{ end }}"><i
+                                        class="fas fa-{{ if .IsOperational }}check-square{{ else if .IsOutage }}exclamation-triangle{{ else }}minus{{ end }}"></i></span>
+                            </td>
                             {{ end }}
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>
-                        </th>
-                        {{ range $.Days }}
-                        <th>
-                            {{ . }}</td>
-                            {{ end }}
-                    </tr>
-                </tfoot>
-                <tbody>
-                    {{ range .Services }}
-                    <tr>
-                        <th class="is-vcentered">
-                            {{ .Name }}</th>
-                        <td title='[{{ .LatestStatus }}] {{ .LatestStatusAt.Format "2006-01-02 15:04:05 MST" }}'
-                            class="is-vcentered">
-                            <span
-                                class='is-size-4 has-{{ if .LatestStatus.IsOperational }}text-success{{ else if .LatestStatus.IsWarning }}text-warning{{ else }}text-light{{ end }}'>
-                                {{ if .LatestStatus.IsOperational }}🟢{{ else if .LatestStatus.IsWarning }}⚠️{{
-                                else
-                                }}➖{{ end }}
-                            </span>
-                        </td>
-                        {{ range .StatusHistory }}
-                        <td class="is-vcentered">
-                            <span
-                                class='is-size-4 has-{{ if .IsOperational }}text-success{{ else if .IsWarning }}text-warning{{ else }}text-light{{ end }}'>
-                                {{ if .IsOperational }}🟢{{ else if .IsWarning }}⚠️{{ else
-                                }}➖{{ end }}
-                            </span>
-                        </td>
+                        </tr>
                         {{ end }}
-                    </tr>
-                    {{ end }}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
         {{ end }}
 
         {{ if ne .FooterMessage.IsEmpty true }}
-        <div class="block" style="margin-top: 50px;">
+        <div class="block mt-1">
             <div class="notification">
                 <div class="content">
                     {{ .FooterMessage.HTML }}
@@ -130,12 +142,42 @@
             </div>
         </div>
 
-        <footer class="footer is-small" style="padding: 1rem;">
+        <footer class="footer is-small p-2">
             <div class="content has-text-centered">
                 {{ .PoweredBy.HTML }}
             </div>
         </footer>
     </div>
+    <script>
+        let e = document.getElementsByClassName('toggle-caret')
+        for (let i = 0; i < e.length; i++) {
+            let t = e[i].id.replace('caret', 'table')
+            e[i].addEventListener('click', function () {
+                e[i].classList.toggle('fa-caret-right')
+                e[i].classList.toggle('fa-caret-down')
+                let b = document.getElementById(t)
+                if (b) {
+                    b.classList.toggle('is-hidden')
+                }
+            })
+        }
+        let g = document.getElementsByClassName('toggle-button')
+        for (let i = 0; i < g.length; i++) {
+            let c = g[i].id.replace('button', 'caret')
+            let t = g[i].id.replace('button', 'table')
+            g[i].addEventListener('click', function () {
+                let f = document.getElementById(c)
+                if (f) {
+                    f.classList.toggle('fa-caret-right')
+                    f.classList.toggle('fa-caret-down')
+                }
+                let b = document.getElementById(t)
+                if (b) {
+                    b.classList.toggle('is-hidden')
+                }
+            })
+        }
+    </script>
 </body>
 
 </html>
