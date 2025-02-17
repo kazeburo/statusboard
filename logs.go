@@ -143,7 +143,7 @@ func (o *Opt) loadLog(ctx context.Context) {
 					if ok == 0 && fail == 0 {
 						service.LatestStatus = NoDATA
 					} else if fail > 0 {
-						service.LatestStatus = Warning
+						service.LatestStatus = Outage
 					} else {
 						service.LatestStatus = Operational
 					}
@@ -157,13 +157,35 @@ func (o *Opt) loadLog(ctx context.Context) {
 				if ok == 0 && fail == 0 {
 					service.StatusHistory[i] = NoDATA
 				} else if fail > 0 {
-					service.StatusHistory[i] = Warning
+					service.StatusHistory[i] = Outage
 				} else {
 					service.StatusHistory[i] = Operational
 				}
 			}
 		}
 	}
+
+	for _, categeory := range o.config.Categories {
+		ok := 0
+		fail := 0
+		nodata := 0
+		for _, service := range categeory.Services {
+			if service.LatestStatus.IsOperational() {
+				ok++
+			} else if service.LatestStatus.IsOutage() {
+				fail++
+			} else {
+				nodata++
+			}
+		}
+		categeory.LatestStatus = NoDATA
+		if fail == 0 && ok > 0 {
+			categeory.LatestStatus = Operational
+		} else if fail > 0 {
+			categeory.LatestStatus = Outage
+		}
+	}
+
 	o.config.Days = days
 	o.config.LastUpdatedAt = time.Now()
 }

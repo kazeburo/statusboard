@@ -126,7 +126,7 @@ func StatusText(s string) *statusText {
 }
 
 var NoDATA = StatusText("NoData")
-var Warning = StatusText("Warning")
+var Outage = StatusText("Outage")
 var Operational = StatusText("Operational")
 
 func (s *statusText) MarshalJSON() ([]byte, error) {
@@ -141,33 +141,35 @@ func (s *statusText) IsOperational() bool {
 	return s == Operational
 }
 
-func (s *statusText) IsWarning() bool {
-	return s == Warning
+func (s *statusText) IsOutage() bool {
+	return s == Outage
 }
 
 type Config struct {
-	Title            string     `toml:"title" json:"title"`
-	NavTitle         *markdown  `toml:"nav_title" json:"-"`
-	NavButtonName    string     `toml:"nav_button_name" json:"-"`
-	NavButtonLink    string     `toml:"nav_button_link" json:"-"`
-	HeaderMessage    *markdown  `toml:"header_message" json:"-"`
-	FooterMessage    *markdown  `toml:"footer_message" json:"-"`
-	PoweredBy        *markdown  `toml:"powered_by" json:"-"`
-	Categories       []Category `toml:"category" json:"categories"`
-	WorkerInterval   duration   `toml:"worker_interval" json:"-"`
-	WorkerTimeout    duration   `toml:"worker_timeout" json:"-"`
-	NumOfWorker      int        `toml:"num_of_worker" json:"-"`
-	MaxCheckAttempts int        `toml:"max_check_attempts" json:"-"`
-	RetryInterval    duration   `toml:"retry_interval" json:"-"`
-	LatestTimeRange  duration   `toml:"latest_time_range" json:"-"`
-	Days             []string   `json:"days"`
-	LastUpdatedAt    time.Time  `json:"last_updated_at"`
+	Title            string      `toml:"title" json:"title"`
+	NavTitle         *markdown   `toml:"nav_title" json:"-"`
+	NavButtonName    string      `toml:"nav_button_name" json:"-"`
+	NavButtonLink    string      `toml:"nav_button_link" json:"-"`
+	HeaderMessage    *markdown   `toml:"header_message" json:"-"`
+	FooterMessage    *markdown   `toml:"footer_message" json:"-"`
+	PoweredBy        *markdown   `toml:"powered_by" json:"-"`
+	Categories       []*Category `toml:"category" json:"categories"`
+	WorkerInterval   duration    `toml:"worker_interval" json:"-"`
+	WorkerTimeout    duration    `toml:"worker_timeout" json:"-"`
+	NumOfWorker      int         `toml:"num_of_worker" json:"-"`
+	MaxCheckAttempts int         `toml:"max_check_attempts" json:"-"`
+	RetryInterval    duration    `toml:"retry_interval" json:"-"`
+	LatestTimeRange  duration    `toml:"latest_time_range" json:"-"`
+	Days             []string    `json:"days"`
+	LastUpdatedAt    time.Time   `json:"last_updated_at"`
 }
 
 type Category struct {
-	Name     string     `toml:"name" json:"name"`
-	Comment  string     `toml:"comment" json:"comment"`
-	Services []*Service `toml:"service" json:"services"`
+	Name         string      `toml:"name" json:"name"`
+	Comment      string      `toml:"comment" json:"comment"`
+	Services     []*Service  `toml:"service" json:"services"`
+	LatestStatus *statusText `json:"latest_status"`
+	Hide         bool        `toml:"hide" json:"-"`
 }
 
 type Service struct {
