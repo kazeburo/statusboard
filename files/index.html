@@ -5,7 +5,9 @@
 <head>
     <meta charset="utf-8">
     <title>{{ .Title }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.3/css/bulma.min.css"
+        integrity="sha512-4EnjWdm80dyWrJ7rh/tlhNt6fJL52dSDSHNEqfdVmBLpJLPrRYnFa+Kn4ZZL+FRkDL5/7lAXuHylzJkpzkSM2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -71,7 +73,7 @@
                     </h2>
                 </div>
                 <div class="column has-text-right"><button
-                        class="button is-small {{ if .LatestStatus.IsOperational }}is-success{{ else if .LatestStatus.IsOutage }}is-warning{{ else }}is-light{{ end }} toggle-button"
+                        class="button is-outlined is-small {{ if .LatestStatus.IsOperational }}is-success{{ else if .LatestStatus.IsOutage }}is-warning{{ else }}is-light{{ end }} toggle-button"
                         id="button-{{ $i}}">
                         <span class="icon is-small"><i
                                 class="fas fa-{{ if .LatestStatus.IsOperational }}check-square{{ else if .LatestStatus.IsOutage }}exclamation-triangle{{ else }}minus{{ end }}"></i></span>
