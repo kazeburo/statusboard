@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.1](https://github.com/kazeburo/statusboard/compare/v0.2.0...v0.2.1) - 2025-02-18
+- use cloudflare cdn by @kazeburo in https://github.com/kazeburo/statusboard/pull/28
+
 ## [v0.1.4](https://github.com/kazeburo/statusboard/compare/v0.1.3...v0.1.4) - 2025-02-17
 - refresh ui by @kazeburo in https://github.com/kazeburo/statusboard/pull/26
 
