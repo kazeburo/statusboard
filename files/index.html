@@ -5,6 +5,9 @@
 <head>
     <meta charset="utf-8">
     <title>{{ .Title }}</title>
+    {{ if ne .Favicon "" }}
+    <link rel="icon" href="{{ .Favicon }}">
+    {{ end }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.3/css/bulma.min.css"
         integrity="sha512-4EnjWdm80dyWrJ7rh/tlhNt6fJL52dSDSHNEqfdVmBLpJLPrRYnFa+Kn4ZZL+FRkDL5/7lAXuHylzJkpzkSM2A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
