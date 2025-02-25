@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.2](https://github.com/kazeburo/statusboard/compare/v0.2.1...v0.2.2) - 2025-02-25
+- add check mode by @kazeburo in https://github.com/kazeburo/statusboard/pull/30
+- Add favicon config by @kazeburo in https://github.com/kazeburo/statusboard/pull/32
+
 ## [v0.2.1](https://github.com/kazeburo/statusboard/compare/v0.2.0...v0.2.1) - 2025-02-18
 - use cloudflare cdn by @kazeburo in https://github.com/kazeburo/statusboard/pull/28
 
