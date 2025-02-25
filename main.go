@@ -148,6 +148,7 @@ func (s *statusText) IsOutage() bool {
 
 type Config struct {
 	Title            string      `toml:"title" json:"title"`
+	Favicon          string      `toml:"favicon"`
 	NavTitle         *markdown   `toml:"nav_title" json:"-"`
 	NavButtonName    string      `toml:"nav_button_name" json:"-"`
 	NavButtonLink    string      `toml:"nav_button_link" json:"-"`
