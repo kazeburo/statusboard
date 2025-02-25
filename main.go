@@ -29,6 +29,7 @@ type Opt struct {
 	Toml     string `long:"toml" description:"file path to toml file" required:"true"`
 	Data     string `long:"data" description:"file path to data dir" required:"true"`
 	Version  bool   `short:"v" long:"version" description:"Show version"`
+	Check    bool   `long:"check" description:"Run syntax check for configuration"`
 	config   *Config
 	htmlBlob []byte
 }
@@ -253,6 +254,11 @@ func _main() int {
 		return 1
 	}
 	opt.config = conf
+
+	if opt.Check {
+		fmt.Fprint(os.Stdout, "syntax OK\n")
+		return 0
+	}
 
 	// check open file in data dir
 	err = opt.createServiceLog()
