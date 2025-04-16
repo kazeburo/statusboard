@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.2.3](https://github.com/kazeburo/statusboard/compare/v0.2.2...v0.2.3) - 2025-04-16
+- Bump golang.org/x/net from 0.34.0 to 0.36.0 by @dependabot in https://github.com/kazeburo/statusboard/pull/33
+- add permission on test.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/36
+- Create dependabot.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/37
+- Bump golang.org/x/sync from 0.11.0 to 0.13.0 by @dependabot in https://github.com/kazeburo/statusboard/pull/40
+- Bump github.com/BurntSushi/toml from 1.4.0 to 1.5.0 by @dependabot in https://github.com/kazeburo/statusboard/pull/38
+- Bump github.com/yuin/goldmark from 1.7.8 to 1.7.10 by @dependabot in https://github.com/kazeburo/statusboard/pull/39
+
 ## [v0.2.2](https://github.com/kazeburo/statusboard/compare/v0.2.1...v0.2.2) - 2025-02-25
 - add check mode by @kazeburo in https://github.com/kazeburo/statusboard/pull/30
 - Add favicon config by @kazeburo in https://github.com/kazeburo/statusboard/pull/32
