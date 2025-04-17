@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.4](https://github.com/kazeburo/statusboard/compare/v0.2.3...v0.2.4) - 2025-04-17
+- Bump golang.org/x/net from 0.36.0 to 0.38.0 in the go_modules group by @dependabot in https://github.com/kazeburo/statusboard/pull/41
+
 ## [v0.2.3](https://github.com/kazeburo/statusboard/compare/v0.2.2...v0.2.3) - 2025-04-16
 - Bump golang.org/x/net from 0.34.0 to 0.36.0 by @dependabot in https://github.com/kazeburo/statusboard/pull/33
 - add permission on test.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/36
