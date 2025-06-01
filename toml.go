@@ -147,9 +147,9 @@ func loadToml(path string) (*Config, error) {
 		return nil, errors.Wrap(err, "failed to decode toml")
 	}
 
-	for _, categeory := range conf.Categories {
-		for _, service := range categeory.Services {
-			service.categoryName = categeory.Name
+	for _, category := range conf.Categories {
+		for _, service := range category.Services {
+			service.categoryName = category.Name
 		}
 	}
 
