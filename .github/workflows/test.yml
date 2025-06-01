@@ -19,8 +19,15 @@ jobs:
         with:
           go-version-file: go.mod
 
+      - name: test
+        run: make check
+        env:
+          CGO_ENABLED: 0
+
       - name: Snapshot GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
           version: latest
           args: build --snapshot
+        env:
+          CGO_ENABLED: 0
