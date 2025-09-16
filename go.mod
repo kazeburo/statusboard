@@ -1,6 +1,6 @@
 module github.com/kazeburo/statusboard
 
-go 1.23.4
+go 1.24.0
 
 require (
 	github.com/BurntSushi/toml v1.5.0
@@ -26,6 +26,6 @@ require (
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/pkg/errors v0.9.1
 	github.com/yuin/goldmark v1.7.13
-	golang.org/x/sync v0.14.0
+	golang.org/x/sync v0.17.0
 	golang.org/x/sys v0.33.0 // indirect
 )
