@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.6](https://github.com/kazeburo/statusboard/compare/v0.2.5...v0.2.6) - 2025-09-22
+- pin actions commithash by @kazeburo in https://github.com/kazeburo/statusboard/pull/53
+
 ## [v0.2.5](https://github.com/kazeburo/statusboard/compare/v0.2.4...v0.2.5) - 2025-09-16
 - Bump github.com/yuin/goldmark from 1.7.12 to 1.7.13 by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/50
 - Bump golang.org/x/sync from 0.14.0 to 0.17.0 by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/51
