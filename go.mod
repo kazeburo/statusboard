@@ -25,7 +25,7 @@ require (
 	github.com/goccy/go-json v0.10.5
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/pkg/errors v0.9.1
-	github.com/yuin/goldmark v1.7.13
+	github.com/yuin/goldmark v1.7.16
 	golang.org/x/sync v0.18.0
 	golang.org/x/sys v0.38.0 // indirect
 )
