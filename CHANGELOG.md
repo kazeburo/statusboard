@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.2.7](https://github.com/kazeburo/statusboard/compare/v0.2.6...v0.2.7) - 2026-02-13
+- Bump golang.org/x/crypto from 0.38.0 to 0.45.0 in the go_modules group across 1 directory by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/56
+- Bump github.com/yuin/goldmark from 1.7.13 to 1.7.16 by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/63
+- Update dependabot.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/64
+- Bump the dependencies group with 3 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/65
+- Update dependabot.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/66
+- Update dependabot.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/71
+- ci: bump the dependencies group with 4 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/72
+
 ## [v0.2.6](https://github.com/kazeburo/statusboard/compare/v0.2.5...v0.2.6) - 2025-09-22
 - pin actions commithash by @kazeburo in https://github.com/kazeburo/statusboard/pull/53
 
