@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.8](https://github.com/kazeburo/statusboard/compare/v0.2.7...v0.2.8) - 2026-02-15
+- Update tagpr.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/73
+
 ## [v0.2.7](https://github.com/kazeburo/statusboard/compare/v0.2.6...v0.2.7) - 2026-02-13
 - Bump golang.org/x/crypto from 0.38.0 to 0.45.0 in the go_modules group across 1 directory by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/56
 - Bump github.com/yuin/goldmark from 1.7.13 to 1.7.16 by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/63
