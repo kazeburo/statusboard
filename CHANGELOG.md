@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.9](https://github.com/kazeburo/statusboard/compare/v0.2.8...v0.2.9) - 2026-02-18
+- go: bump github.com/gammazero/workerpool from 1.1.3 to 1.2.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/75
+- ci: bump Songmu/tagpr from 1.15.0 to 1.17.0 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/76
+
 ## [v0.2.8](https://github.com/kazeburo/statusboard/compare/v0.2.7...v0.2.8) - 2026-02-15
 - Update tagpr.yml by @kazeburo in https://github.com/kazeburo/statusboard/pull/73
 
