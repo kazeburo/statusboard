@@ -23,7 +23,7 @@ require (
 require (
 	github.com/gammazero/workerpool v1.2.1
 	github.com/goccy/go-json v0.10.5
-	github.com/labstack/echo/v4 v4.15.0
+	github.com/labstack/echo/v4 v4.15.1
 	github.com/pkg/errors v0.9.1
 	github.com/yuin/goldmark v1.7.16
 	golang.org/x/sync v0.19.0
