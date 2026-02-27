@@ -29,9 +29,9 @@ func (j *JSONSerializer) Deserialize(c *echo.Context, i any) error {
 	return err
 }
 
-// Copy from echo/middleware/request_logger.go, with custom skipper
+// RequestLogger is a thin wrapper around echo/middleware.RequestLoggerWithConfig
+// that uses a custom skipper and slog-based logging configuration.
 func RequestLogger(skipper middleware.Skipper) echo.MiddlewareFunc {
-	return middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		Skipper:          skipper,
 		LogLatency:       true,
 		LogRemoteIP:      true,
