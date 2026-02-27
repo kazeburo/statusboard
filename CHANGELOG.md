@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.2.10](https://github.com/kazeburo/statusboard/compare/v0.2.9...v0.2.10) - 2026-02-27
+- update echo/v5 by @kazeburo in https://github.com/kazeburo/statusboard/pull/82
+- ci: bump the dependencies group across 1 directory with 2 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/81
+- go: bump github.com/labstack/echo/v5 from 5.0.0 to 5.0.3 by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/84
+
 ## [v0.2.9](https://github.com/kazeburo/statusboard/compare/v0.2.8...v0.2.9) - 2026-02-24
 - go: bump github.com/gammazero/workerpool from 1.1.3 to 1.2.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/75
 - ci: bump Songmu/tagpr from 1.15.0 to 1.17.0 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/76
