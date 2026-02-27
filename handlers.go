@@ -32,6 +32,7 @@ func (j *JSONSerializer) Deserialize(c *echo.Context, i any) error {
 // RequestLogger is a thin wrapper around echo/middleware.RequestLoggerWithConfig
 // that uses a custom skipper and slog-based logging configuration.
 func RequestLogger(skipper middleware.Skipper) echo.MiddlewareFunc {
+	return middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		Skipper:          skipper,
 		LogLatency:       true,
 		LogRemoteIP:      true,
@@ -44,13 +45,13 @@ func RequestLogger(skipper middleware.Skipper) echo.MiddlewareFunc {
 		LogContentLength: true,
 		LogResponseSize:  true,
 		// forwards error to the global error handler, so it can decide appropriate status code.
-		// NB: side-effect of that is - request is now "committed" written to the client. Middlewares up in chain can not
+		// NB: side-effect of that is - request is now "committed" written to the client. Middlewares up in chain cannot
 		// change Response status code or response body.
 		HandleError: true,
 		LogValuesFunc: func(c *echo.Context, v middleware.RequestLoggerValues) error {
 			logger := c.Logger()
 			if v.Error == nil {
-				logger.LogAttrs(context.Background(), slog.LevelInfo, "REQUEST",
+				logger.LogAttrs(c.Request().Context(), slog.LevelInfo, "REQUEST",
 					slog.String("method", v.Method),
 					slog.String("uri", v.URI),
 					slog.Int("status", v.Status),
@@ -65,7 +66,7 @@ func RequestLogger(skipper middleware.Skipper) echo.MiddlewareFunc {
 				return nil
 			}
 
-			logger.LogAttrs(context.Background(), slog.LevelError, "REQUEST_ERROR",
+			logger.LogAttrs(c.Request().Context(), slog.LevelError, "REQUEST_ERROR",
 				slog.String("method", v.Method),
 				slog.String("uri", v.URI),
 				slog.Int("status", v.Status),
