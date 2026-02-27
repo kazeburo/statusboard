@@ -16,6 +16,9 @@ type JSONSerializer struct{}
 
 func (j *JSONSerializer) Serialize(c *echo.Context, i any, indent string) error {
 	enc := json.NewEncoder(c.Response())
+	if indent != "" {
+		enc.SetIndent("", indent)
+	}
 	return enc.Encode(i)
 }
 
