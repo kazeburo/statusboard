@@ -2,31 +2,86 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/goccy/go-json"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 )
 
 type JSONSerializer struct{}
 
-func (j *JSONSerializer) Serialize(c echo.Context, i interface{}, indent string) error {
+func (j *JSONSerializer) Serialize(c *echo.Context, i any, indent string) error {
 	enc := json.NewEncoder(c.Response())
 	return enc.Encode(i)
 }
 
-func (j *JSONSerializer) Deserialize(c echo.Context, i interface{}) error {
+func (j *JSONSerializer) Deserialize(c *echo.Context, i any) error {
 	err := json.NewDecoder(c.Request().Body).Decode(i)
 	if ute, ok := err.(*json.UnmarshalTypeError); ok {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Unmarshal type error: expected=%v, got=%v, field=%v, offset=%v", ute.Type, ute.Value, ute.Field, ute.Offset)).SetInternal(err)
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Unmarshal type error: expected=%v, got=%v, field=%v, offset=%v", ute.Type, ute.Value, ute.Field, ute.Offset)).Wrap(err)
 	} else if se, ok := err.(*json.SyntaxError); ok {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Syntax error: offset=%v, error=%v", se.Offset, se.Error())).SetInternal(err)
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Syntax error: offset=%v, error=%v", se.Offset, se.Error())).Wrap(err)
 	}
 	return err
+}
+
+// Copy from echo/middleware/request_logger.go, with custom skipper
+func RequestLogger(skipper middleware.Skipper) echo.MiddlewareFunc {
+	return middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		Skipper:          skipper,
+		LogLatency:       true,
+		LogRemoteIP:      true,
+		LogHost:          true,
+		LogMethod:        true,
+		LogURI:           true,
+		LogRequestID:     true,
+		LogUserAgent:     true,
+		LogStatus:        true,
+		LogContentLength: true,
+		LogResponseSize:  true,
+		// forwards error to the global error handler, so it can decide appropriate status code.
+		// NB: side-effect of that is - request is now "commited" written to the client. Middlewares up in chain can not
+		// change Response status code or response body.
+		HandleError: true,
+		LogValuesFunc: func(c *echo.Context, v middleware.RequestLoggerValues) error {
+			logger := c.Logger()
+			if v.Error == nil {
+				logger.LogAttrs(context.Background(), slog.LevelInfo, "REQUEST",
+					slog.String("method", v.Method),
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+					slog.Duration("latency", v.Latency),
+					slog.String("host", v.Host),
+					slog.String("bytes_in", v.ContentLength),
+					slog.Int64("bytes_out", v.ResponseSize),
+					slog.String("user_agent", v.UserAgent),
+					slog.String("remote_ip", v.RemoteIP),
+					slog.String("request_id", v.RequestID),
+				)
+				return nil
+			}
+
+			logger.LogAttrs(context.Background(), slog.LevelError, "REQUEST_ERROR",
+				slog.String("method", v.Method),
+				slog.String("uri", v.URI),
+				slog.Int("status", v.Status),
+				slog.Duration("latency", v.Latency),
+				slog.String("host", v.Host),
+				slog.String("bytes_in", v.ContentLength),
+				slog.Int64("bytes_out", v.ResponseSize),
+				slog.String("user_agent", v.UserAgent),
+				slog.String("remote_ip", v.RemoteIP),
+				slog.String("request_id", v.RequestID),
+
+				slog.String("error", v.Error.Error()),
+			)
+			return nil
+		},
+	})
 }
 
 func (o *Opt) ifModifiedSince(r *http.Request) bool {
@@ -45,22 +100,20 @@ func (o *Opt) ifModifiedSince(r *http.Request) bool {
 	return true
 }
 
-func (o *Opt) handleJSON(c echo.Context) error {
+func (o *Opt) handleJSON(c *echo.Context) error {
 	return c.JSON(http.StatusOK, o.config)
 }
 
-func (o *Opt) handleIndex(c echo.Context) error {
+func (o *Opt) handleIndex(c *echo.Context) error {
 	return c.HTMLBlob(http.StatusOK, o.htmlBlob)
 }
 
 func (o *Opt) startServer(ctx context.Context) error {
 	e := echo.New()
 	e.JSONSerializer = &JSONSerializer{}
-	e.HideBanner = true
-	e.Debug = false
 
-	skipper := func(c echo.Context) bool {
-		switch c.Path() {
+	skipper := func(c *echo.Context) bool {
+		switch c.Request().URL.Path {
 		case "/favicon.ico", "/live":
 			return true
 		default:
@@ -68,14 +121,12 @@ func (o *Opt) startServer(ctx context.Context) error {
 		}
 	}
 
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Skipper: skipper,
-	}))
+	e.Use(RequestLogger(skipper))
 	e.Use(middleware.Recover())
 
 	// Route level middleware
 	conditionalGET := func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
+		return func(c *echo.Context) error {
 			if !o.ifModifiedSince(c.Request()) {
 				return c.NoContent(http.StatusNotModified)
 			}
@@ -87,20 +138,10 @@ func (o *Opt) startServer(ctx context.Context) error {
 	e.GET("/", o.handleIndex, conditionalGET)
 	e.GET("/_json", o.handleJSON, conditionalGET)
 
-	c := make(chan error, 1)
-	go func() {
-		c <- e.Start(o.Listen)
-	}()
-	var err error
-	select {
-	case <-ctx.Done():
-		bg, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		err = e.Shutdown(bg)
-	case err = <-c:
+	sc := echo.StartConfig{
+		Address:         o.Listen,
+		HideBanner:      true,
+		GracefulTimeout: 10 * time.Second,
 	}
-	if errors.Is(err, http.ErrServerClosed) {
-		return nil
-	}
-	return err
+	return sc.Start(ctx, e)
 }
