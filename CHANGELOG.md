@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.3.1](https://github.com/kazeburo/statusboard/compare/v0.3.0...v0.3.1) - 2026-03-20
+- go: bump github.com/labstack/echo/v5 from 5.0.3 to 5.0.4 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/85
+- go: bump golang.org/x/sync from 0.19.0 to 0.20.0 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/87
+- go: bump github.com/goccy/go-json from 0.10.5 to 0.10.6 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/88
+- go: bump github.com/yuin/goldmark from 1.7.16 to 1.7.17 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/89
+
 ## [v0.2.10](https://github.com/kazeburo/statusboard/compare/v0.2.9...v0.2.10) - 2026-02-27
 - update echo/v5 by @kazeburo in https://github.com/kazeburo/statusboard/pull/82
 - ci: bump the dependencies group across 1 directory with 2 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/81
