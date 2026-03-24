@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.3.2](https://github.com/kazeburo/statusboard/compare/v0.3.1...v0.3.2) - 2026-03-24
+- Update .goreleaser.yml to fix version flag by @kazeburo in https://github.com/kazeburo/statusboard/pull/90
+
 ## [v0.3.1](https://github.com/kazeburo/statusboard/compare/v0.3.0...v0.3.1) - 2026-03-20
 - go: bump github.com/labstack/echo/v5 from 5.0.3 to 5.0.4 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/85
 - go: bump golang.org/x/sync from 0.19.0 to 0.20.0 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/87
