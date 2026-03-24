@@ -2,7 +2,7 @@ builds:
   - binary: statusboard
     ldflags:
       - -s -w
-      - -X main.Version=v{{.Version}}
+      - -X main.version=v{{.Version}}
     goos:
       - linux
     goarch:
