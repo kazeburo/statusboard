@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.3.3](https://github.com/kazeburo/statusboard/compare/v0.3.2...v0.3.3) - 2026-03-25
+- go: bump github.com/yuin/goldmark from 1.7.17 to 1.8.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/92
+
 ## [v0.3.2](https://github.com/kazeburo/statusboard/compare/v0.3.1...v0.3.2) - 2026-03-24
 - Update .goreleaser.yml to fix version flag by @kazeburo in https://github.com/kazeburo/statusboard/pull/90
 
