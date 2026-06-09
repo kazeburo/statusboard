@@ -18,6 +18,6 @@ require (
 	github.com/labstack/echo/v5 v5.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/yuin/goldmark v1.8.2
-	golang.org/x/sync v0.20.0
+	golang.org/x/sync v0.21.0
 	golang.org/x/sys v0.40.0 // indirect
 )
