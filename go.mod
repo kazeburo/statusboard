@@ -9,7 +9,7 @@ require (
 
 require (
 	github.com/gammazero/deque v1.2.1 // indirect
-	golang.org/x/time v0.14.0 // indirect
+	golang.org/x/time v0.15.0 // indirect
 )
 
 require (
@@ -19,5 +19,5 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/yuin/goldmark v1.8.2
 	golang.org/x/sync v0.21.0
-	golang.org/x/sys v0.40.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
 )
