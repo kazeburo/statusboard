@@ -1,5 +1,21 @@
 # Changelog
 
+## [v0.3.3](https://github.com/kazeburo/statusboard/compare/v0.3.2...v0.3.3) - 2026-07-03
+
+- go: bump github.com/yuin/goldmark from 1.7.17 to 1.8.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/92
+- go: bump the dependencies group across 1 directory with 2 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/96
+- ci: bump actions/setup-go from 6.3.0 to 6.4.0 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/95
+- ci: bump Songmu/tagpr from 1.17.1 to 1.18.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/97
+- ci: bump Songmu/tagpr from 1.18.1 to 1.18.2 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/98
+- ci: bump the dependencies group with 2 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/99
+- go: bump github.com/labstack/echo/v5 from 5.1.0 to 5.1.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/100
+- go: bump golang.org/x/sync from 0.20.0 to 0.21.0 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/103
+- ci: bump the dependencies group across 1 directory with 3 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/102
+- go: bump github.com/labstack/echo/v5 from 5.1.1 to 5.2.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/104
+- ci: bump the dependencies group across 1 directory with 3 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/107
+- Change Dependabot schedule to weekly and update config by @kazeburo in https://github.com/kazeburo/statusboard/pull/108
+- go: bump the dependencies group with 2 updates by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/109
+
 ## [v0.3.2](https://github.com/kazeburo/statusboard/compare/v0.3.1...v0.3.2) - 2026-03-24
 - Update .goreleaser.yml to fix version flag by @kazeburo in https://github.com/kazeburo/statusboard/pull/90
 
