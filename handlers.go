@@ -116,7 +116,7 @@ func (o *Opt) handleIndex(c *echo.Context) error {
 	return c.HTMLBlob(http.StatusOK, o.htmlBlob)
 }
 
-func (o *Opt) startServer(ctx context.Context) error {
+func (o *Opt) buildHandler(ctx context.Context) *echo.Echo {
 	e := echo.New()
 	e.JSONSerializer = &JSONSerializer{}
 
@@ -147,11 +147,15 @@ func (o *Opt) startServer(ctx context.Context) error {
 	// Routes
 	e.GET("/", o.handleIndex, conditionalGET)
 	e.GET("/_json", o.handleJSON, conditionalGET)
+	return e
+}
 
+func (o *Opt) startServer(ctx context.Context) error {
+	handler := o.buildHandler(ctx)
 	sc := echo.StartConfig{
 		Address:         o.Listen,
 		HideBanner:      true,
 		GracefulTimeout: 10 * time.Second,
 	}
-	return sc.Start(ctx, e)
+	return sc.Start(ctx, handler)
 }
