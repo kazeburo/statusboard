@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.3.4](https://github.com/monitoring-forge/statusboard/compare/v0.3.3...v0.3.4) - 2026-07-19
+
+- Feat/fix for race and impove toml check and repository transfer by @kazeburo in https://github.com/monitoring-forge/statusboard/pull/111
+- go: bump the dependencies group with 2 updates by @dependabot[bot] in https://github.com/monitoring-forge/statusboard/pull/110
+- fix repository trasfer by @kazeburo in https://github.com/monitoring-forge/statusboard/pull/113
+
 ## [v0.3.3](https://github.com/kazeburo/statusboard/compare/v0.3.2...v0.3.3) - 2026-07-03
 
 - go: bump github.com/yuin/goldmark from 1.7.17 to 1.8.1 in the dependencies group by @dependabot[bot] in https://github.com/kazeburo/statusboard/pull/92
