@@ -150,6 +150,9 @@ func loadToml(path string) (*Config, error) {
 	for _, category := range conf.Categories {
 		for _, service := range category.Services {
 			service.categoryName = category.Name
+			if len(service.Command) == 0 {
+				return nil, errors.Errorf("service %s in category %s has no command", service.Name, category.Name)
+			}
 		}
 	}
 

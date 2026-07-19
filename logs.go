@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/goccy/go-json"
+	"github.com/pkg/errors"
 )
 
 //go:embed files/index.html
@@ -130,7 +131,7 @@ func (o *Opt) loadLog(ctx context.Context) {
 		days = append(days, d.Format("01/02"))
 		lastUpdated, logs, latestLogs, err := o.loadServiceLog(ctx, d)
 		d = d.Add(-1 * time.Hour * 24)
-		if err != nil && err == os.ErrNotExist {
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
 			slog.Warn("failed to loadlog", slog.Any("error", err))
 			continue
 		}
@@ -191,8 +192,10 @@ func (o *Opt) loadLog(ctx context.Context) {
 }
 
 func (o *Opt) renderStatusPage(ctx context.Context) error {
-	o.loadLog(ctx)
 	r := template.Must(template.New("index").Parse(string(indexhtml)))
+	o.rwlock.Lock()
+	defer o.rwlock.Unlock()
+	o.loadLog(ctx)
 	w := &bytes.Buffer{}
 	err := r.ExecuteTemplate(w, "index", o.config)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"sync"
 	"syscall"
 
 	"github.com/jessevdk/go-flags"
@@ -24,6 +25,7 @@ type Opt struct {
 	Check    bool   `long:"check" description:"Run syntax check for configuration"`
 	config   *Config
 	htmlBlob []byte
+	rwlock   sync.RWMutex
 }
 
 func printVersion() {

@@ -105,14 +105,18 @@ func (o *Opt) ifModifiedSince(r *http.Request) bool {
 }
 
 func (o *Opt) handleJSON(c *echo.Context) error {
+	o.rwlock.RLock()
+	defer o.rwlock.RUnlock()
 	return c.JSON(http.StatusOK, o.config)
 }
 
 func (o *Opt) handleIndex(c *echo.Context) error {
+	o.rwlock.RLock()
+	defer o.rwlock.RUnlock()
 	return c.HTMLBlob(http.StatusOK, o.htmlBlob)
 }
 
-func (o *Opt) startServer(ctx context.Context) error {
+func (o *Opt) buildHandler() *echo.Echo {
 	e := echo.New()
 	e.JSONSerializer = &JSONSerializer{}
 
@@ -131,21 +135,28 @@ func (o *Opt) startServer(ctx context.Context) error {
 	// Route level middleware
 	conditionalGET := func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
+			o.rwlock.RLock()
 			if !o.ifModifiedSince(c.Request()) {
+				o.rwlock.RUnlock()
 				return c.NoContent(http.StatusNotModified)
 			}
 			c.Response().Header().Set("Last-Modified", o.config.LastUpdatedAt.UTC().Format(http.TimeFormat))
+			o.rwlock.RUnlock()
 			return next(c)
 		}
 	}
 	// Routes
 	e.GET("/", o.handleIndex, conditionalGET)
 	e.GET("/_json", o.handleJSON, conditionalGET)
+	return e
+}
 
+func (o *Opt) startServer(ctx context.Context) error {
+	handler := o.buildHandler()
 	sc := echo.StartConfig{
 		Address:         o.Listen,
 		HideBanner:      true,
 		GracefulTimeout: 10 * time.Second,
 	}
-	return sc.Start(ctx, e)
+	return sc.Start(ctx, handler)
 }
