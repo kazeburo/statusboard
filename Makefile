@@ -5,10 +5,10 @@ all: statusboard
 
 .PHONY: statusboard
 
-statusboard: logs.go toml.go worker.go handlers.go main.go
+statusboard: logs.go toml.go worker.go handlers.go main.go files/index.html
 	go build $(LDFLAGS) -o statusboard
 
-linux: logs.go toml.go worker.go handlers.go main.go
+linux: logs.go toml.go worker.go handlers.go main.go files/index.html
 	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o statusboard
 
 check:

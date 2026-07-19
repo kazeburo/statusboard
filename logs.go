@@ -192,10 +192,10 @@ func (o *Opt) loadLog(ctx context.Context) {
 }
 
 func (o *Opt) renderStatusPage(ctx context.Context) error {
+	r := template.Must(template.New("index").Parse(string(indexhtml)))
 	o.rwlock.Lock()
 	defer o.rwlock.Unlock()
 	o.loadLog(ctx)
-	r := template.Must(template.New("index").Parse(string(indexhtml)))
 	w := &bytes.Buffer{}
 	err := r.ExecuteTemplate(w, "index", o.config)
 	if err != nil {
