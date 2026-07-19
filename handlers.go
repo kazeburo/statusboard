@@ -116,7 +116,7 @@ func (o *Opt) handleIndex(c *echo.Context) error {
 	return c.HTMLBlob(http.StatusOK, o.htmlBlob)
 }
 
-func (o *Opt) buildHandler(ctx context.Context) *echo.Echo {
+func (o *Opt) buildHandler() *echo.Echo {
 	e := echo.New()
 	e.JSONSerializer = &JSONSerializer{}
 
@@ -136,11 +136,12 @@ func (o *Opt) buildHandler(ctx context.Context) *echo.Echo {
 	conditionalGET := func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
 			o.rwlock.RLock()
-			defer o.rwlock.RUnlock()
 			if !o.ifModifiedSince(c.Request()) {
+				o.rwlock.RUnlock()
 				return c.NoContent(http.StatusNotModified)
 			}
 			c.Response().Header().Set("Last-Modified", o.config.LastUpdatedAt.UTC().Format(http.TimeFormat))
+			o.rwlock.RUnlock()
 			return next(c)
 		}
 	}
@@ -151,7 +152,7 @@ func (o *Opt) buildHandler(ctx context.Context) *echo.Echo {
 }
 
 func (o *Opt) startServer(ctx context.Context) error {
-	handler := o.buildHandler(ctx)
+	handler := o.buildHandler()
 	sc := echo.StartConfig{
 		Address:         o.Listen,
 		HideBanner:      true,

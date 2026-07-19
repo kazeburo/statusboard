@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -14,6 +15,7 @@ import (
 
 func TestScenario_ConcurrentWorkerAndHTTPHandlers(t *testing.T) {
 	opt := newTestOpt(t)
+
 	testCtx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
@@ -32,17 +34,16 @@ func TestScenario_ConcurrentWorkerAndHTTPHandlers(t *testing.T) {
 		t.Fatalf("initial renderStatusPage failed: %v", err)
 	}
 
-	e := opt.buildHandler(testCtx)
+	e := opt.buildHandler()
 	ts := httptest.NewServer(e)
 	defer ts.Close()
 
-	const (
-		workerIterations  = 24
-		clientGoroutines  = 4
-		requestsPerClient = 24
-	)
+	// set GOMAXPROCS to clientGoroutines + 1 to ensure that the worker and HTTP handlers can run concurrently
+	clientGoroutines := runtime.GOMAXPROCS(0) + 1
+	var workerIterations = clientGoroutines * 10
+	var requestsPerClient = clientGoroutines * 10
 
-	errCh := make(chan error, 1)
+	errCh := make(chan error, 100)
 	reportErr := func(err error) {
 		if err == nil {
 			return
