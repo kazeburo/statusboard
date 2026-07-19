@@ -13,4 +13,4 @@ linux: logs.go toml.go worker.go handlers.go main.go files/index.html
 
 check:
 	go test -v
-	go test -race
+	CGO_ENABLED=1 go test -race
