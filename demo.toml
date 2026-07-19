@@ -1,7 +1,7 @@
 # ページのtitleタグの内容
 title = "Status Page"
 # ナビゲーションバー上のタイトル markdown可
-nav_title = "[Status Page](https://github.com/kazeburo/statusboard/) DEMO"
+nav_title = "[Status Page](https://github.com/monitoring-forge/statusboard/) DEMO"
 # ナビゲーションバー上のボタンの名前
 nav_button_name = "HOME"
 # ナビゲーションバー上のボタンのリンク先
