@@ -1,4 +1,4 @@
-module github.com/kazeburo/statusboard
+module github.com/monitoring-forge/statusboard
 
 go 1.25.0
 

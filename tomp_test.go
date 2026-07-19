@@ -155,3 +155,17 @@ func TestLoadToml_InvalidToml(t *testing.T) {
 		t.Fatal("expected error for invalid toml, got nil")
 	}
 }
+
+func TestLoadToml_MissingCommand(t *testing.T) {
+	tomlContent := `
+[[category]]
+name = "Cat"
+  [[category.service]]
+  name = "Svc"
+`
+	path := writeTempToml(t, tomlContent)
+	_, err := loadToml(path)
+	if err == nil {
+		t.Fatal("expected error for missing command, got nil")
+	}
+}

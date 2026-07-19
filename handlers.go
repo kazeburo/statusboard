@@ -105,10 +105,14 @@ func (o *Opt) ifModifiedSince(r *http.Request) bool {
 }
 
 func (o *Opt) handleJSON(c *echo.Context) error {
+	o.rwlock.RLock()
+	defer o.rwlock.RUnlock()
 	return c.JSON(http.StatusOK, o.config)
 }
 
 func (o *Opt) handleIndex(c *echo.Context) error {
+	o.rwlock.RLock()
+	defer o.rwlock.RUnlock()
 	return c.HTMLBlob(http.StatusOK, o.htmlBlob)
 }
 
@@ -131,6 +135,8 @@ func (o *Opt) startServer(ctx context.Context) error {
 	// Route level middleware
 	conditionalGET := func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
+			o.rwlock.RLock()
+			defer o.rwlock.RUnlock()
 			if !o.ifModifiedSince(c.Request()) {
 				return c.NoContent(http.StatusNotModified)
 			}
