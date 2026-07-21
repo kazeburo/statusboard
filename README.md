@@ -49,7 +49,7 @@ command = ["sh", "-c", "exit 0"]
 
 ### 主な設定項目
 
-- `lang`: 表示言語。未指定時は `ja`
+- `lang`: HTMLの`lang`属性。未指定時は `ja`
 - `title`: ページタイトル。未指定時は `Status Board`
 - `favicon`: favicon URL
 - `nav_title`: ナビゲーションタイトル (Markdown可)
