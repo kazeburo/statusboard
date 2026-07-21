@@ -43,7 +43,9 @@ hide = false
 	if err != nil {
 		t.Fatalf("loadToml failed: %v", err)
 	}
-
+	if conf.Lang != "ja" {
+		t.Errorf("Lang = %q, want %q", conf.Lang, "ja")
+	}
 	if conf.Title != "Test Board" {
 		t.Errorf("Title = %q, want %q", conf.Title, "Test Board")
 	}
