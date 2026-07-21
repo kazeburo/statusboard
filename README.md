@@ -12,7 +12,7 @@
 
 デフォルトでは `:8080` で待ち受けるため、ブラウザで `http://localhost:8080/` にアクセスします。
 
-### 3. 設定ファイルの文法チェックのみ実行
+### 設定ファイルの文法チェックのみ実行
 
 ```sh
 ./statusboard --toml /path/to/statusboard.toml --data /path/to/data --check
