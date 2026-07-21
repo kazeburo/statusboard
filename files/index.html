@@ -1,6 +1,6 @@
 {{ define "index" }}
 <!DOCTYPE html>
-<html>
+<html lang="{{ .Lang }}">
 
 <head>
     <meta charset="utf-8">
@@ -154,23 +154,21 @@
         </footer>
     </div>
     <script>
-        let e = document.getElementsByClassName('toggle-caret')
-        for (let i = 0; i < e.length; i++) {
-            let t = e[i].id.replace('caret', 'table')
-            e[i].addEventListener('click', function () {
-                e[i].classList.toggle('fa-caret-right')
-                e[i].classList.toggle('fa-caret-down')
+        for (const e of document.getElementsByClassName('toggle-caret')) {
+            let t = e.id.replace('caret', 'table')
+            e.addEventListener('click', function () {
+                e.classList.toggle('fa-caret-right')
+                e.classList.toggle('fa-caret-down')
                 let b = document.getElementById(t)
                 if (b) {
                     b.classList.toggle('is-hidden')
                 }
             })
         }
-        let g = document.getElementsByClassName('toggle-button')
-        for (let i = 0; i < g.length; i++) {
-            let c = g[i].id.replace('button', 'caret')
-            let t = g[i].id.replace('button', 'table')
-            g[i].addEventListener('click', function () {
+        for (const g of document.getElementsByClassName('toggle-button')) {
+            let c = g.id.replace('button', 'caret')
+            let t = g.id.replace('button', 'table')
+            g.addEventListener('click', function () {
                 let f = document.getElementById(c)
                 if (f) {
                     f.classList.toggle('fa-caret-right')

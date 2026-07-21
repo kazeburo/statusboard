@@ -90,6 +90,7 @@ func (m *markdown) IsEmpty() bool {
 }
 
 type Config struct {
+	Lang             string      `toml:"lang" json:"-"`
 	Title            string      `toml:"title" json:"title"`
 	Favicon          string      `toml:"favicon"`
 	NavTitle         *markdown   `toml:"nav_title" json:"-"`
@@ -174,6 +175,9 @@ func loadToml(path string) (*Config, error) {
 	}
 	if conf.RetryInterval.IsZero() {
 		conf.RetryInterval = MustDuration("5s")
+	}
+	if conf.Lang == "" {
+		conf.Lang = "ja"
 	}
 	if conf.Title == "" {
 		conf.Title = "Status Board"

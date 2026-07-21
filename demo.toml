@@ -1,3 +1,4 @@
+lang = "ja"
 # ページのtitleタグの内容
 title = "Status Page"
 # ナビゲーションバー上のタイトル markdown可
