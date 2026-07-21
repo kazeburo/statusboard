@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.3.5](https://github.com/monitoring-forge/statusboard/compare/v0.3.4...v0.3.5) - 2026-07-21
+
+- improve readme and html by @kazeburo in https://github.com/monitoring-forge/statusboard/pull/114
+
 ## [v0.3.4](https://github.com/monitoring-forge/statusboard/compare/v0.3.3...v0.3.4) - 2026-07-19
 
 - Feat/fix for race and impove toml check and repository transfer by @kazeburo in https://github.com/monitoring-forge/statusboard/pull/111
