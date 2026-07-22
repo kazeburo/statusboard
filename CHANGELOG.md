@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.3.6](https://github.com/monitoring-forge/statusboard/compare/v0.3.5...v0.3.6) - 2026-07-22
+
+- go: bump the dependencies group with 2 updates by @dependabot[bot] in https://github.com/monitoring-forge/statusboard/pull/116
+- ci: bump Songmu/tagpr from 1.20.0 to 1.20.1 in the dependencies group by @dependabot[bot] in https://github.com/monitoring-forge/statusboard/pull/117
+
 ## [v0.3.5](https://github.com/monitoring-forge/statusboard/compare/v0.3.4...v0.3.5) - 2026-07-21
 
 - improve readme and html by @kazeburo in https://github.com/monitoring-forge/statusboard/pull/114
